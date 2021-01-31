@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Card, CardImg, CardImgOverlay, CardText, CardBody, CardTitle } from 'reactstrap';
+import CampsiteInfo from './CampsiteInfoComponent';
 
 class Directory extends Component {
     constructor(props) {
@@ -11,21 +12,6 @@ class Directory extends Component {
 
     onCampsiteSelect(campsite) {
         this.setState({selectedCampsite: campsite}); //This updates the selected campsite's value of the property named "selectedCampiste" to the value of the "campsite" that is passed into the method argument. 
-    }
-
-    renderSelectedCampsite(campsite) { //This method will display the campsites details to the view.  It is passed in the campsite object
-        if (campsite) { //this makes sure the campsite has an object in it becusue this condition would return false if the campsite value was null or undefined
-            return (//If campsite has and object, if statement will return true and enter the if block. Inside the if block, we return a card that includes the campsite image, name, and description
-                <Card>
-                    <CardImg top src={campsite.image} alt={campsite.name} />
-                    <CardBody>
-                        <CardTitle>{campsite.name}</CardTitle>
-                        <CardText>{campsite.description}</CardText>
-                    </CardBody>
-                </Card>
-            )
-        } 
-        return <div />//if campsite value was null, an empty div will be returned
     }
 
     render() {
@@ -47,11 +33,7 @@ class Directory extends Component {
                 <div className="row">
                     {directory}
                 </div>
-                <div className="row">
-                    <div className="col-md-5 m-1">
-                        {this.renderSelectedCampsite(this.state.selectedCampsite)} {/*call the renderSelectedCampsite method and pass it the campsite object stored in the selectedCampsite property of state*/}
-                    </div>
-                </div>
+                <CampsiteInfo campsite={this.state.selectedCampsite} /> {/*Assigns the selectedCampsite object that is in the local state to the attribute named "campsite".  Because the attribute named "campsite" is in the CampsiteInfo react component JSX tag, it is now available to be passed to the CampsiteInfo component as "props" (properties)*/ }
             </div>
         );
     }
