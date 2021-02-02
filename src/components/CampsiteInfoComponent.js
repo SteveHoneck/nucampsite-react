@@ -47,9 +47,11 @@ class CampsiteInfo extends Component {
   render() {
     if (this.props.campsite) {
       return (
-        <div className="row">
-          {this.renderCampsite(this.props.campsite)}{" "}
-          {this.renderComments(this.props.campsite.comments)} {/*This is passing the "comments" array from the campsites.js file into the renderComments method/function. "comments" array is being made available as "props" to this CampsiteInfoComponent.js file because the CampsiteInfo component is called with an attribute named "campsite" inside the JSX tag in the DirectoryComponent.js file, which passes it as "props" to this file.*/}
+        <div className="container">
+          <div className="row">
+            {this.renderCampsite(this.props.campsite)}{" "}
+            {this.renderComments(this.props.campsite.comments)} {/*This is passing the "comments" array from the campsites.js file into the renderComments method/function. "comments" array is being made available as "props" to this CampsiteInfoComponent.js file because the CampsiteInfo component is called with an attribute named "campsite" inside the JSX tag in the DirectoryComponent.js file, which passes it as "props" to this file.*/}
+          </div>
         </div>
       );
     }
