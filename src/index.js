@@ -5,7 +5,9 @@ import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'typeface-lobster';
 import 'typeface-open-sans';
-import App from './App'; //Must be moved below the typeface-X imports
+import 'font-awesome/css/font-awesome.css';
+import 'bootstrap-social/bootstrap-social.css';
+import App from './App'; //Must be moved below the typeface-X imports & other css imports
 
 ReactDOM.render(
   <React.StrictMode>
