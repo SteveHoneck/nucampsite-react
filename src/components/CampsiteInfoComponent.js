@@ -44,13 +44,13 @@ function RenderComments({comments}) {//This funciton is receiving a props object
   return <div />;
 }
 
-function CampsiteInfo(props) { //This is recieving a campsite object as props from MainComponent which is a campsite from the campsites.js file that was filtered in MainComponent.js.
+function CampsiteInfo(props) { //This is recieving a campsite object as props from MainComponent which is a campsite from the campsites.js file that was filtered in MainComponent.js (THIS MAY NOT BE TRUE ANYMORE???).
   if (props.campsite) {
     return (
       <div className="container">
         <div className="row">
           <RenderCampsite campsite={props.campsite} />
-          <RenderComments comments={props.campsite.comments} /> {/*This is passing the "comments" array from the campsites.js file into the RenderComments method/function. "comments" array is being made available as "props" to this CampsiteInfoComponent.js file because the CampsiteInfo component is called with an attribute named "campsite" inside the JSX tag in the MainComponent.js file, which passes it as "props" to this file.*/}
+          <RenderComments comments={props.comments} /> {/*Pass the comments array as props (now labeled "comments") to RenderComment. It was passed from Main component to CampsiteInfo component, and now is being passed to RenderComments component. This USED TO pass the "comments" array from the campsites.js file into the RenderComments method/function. "comments" array WAS being made available as "props" to this CampsiteInfoComponent.js file because the CampsiteInfo component is called with an attribute named "campsite" inside the JSX tag in the MainComponent.js file, which passes it as "props" to this file.*/}
         </div>
       </div>
     );
