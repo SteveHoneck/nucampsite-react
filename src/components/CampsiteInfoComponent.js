@@ -5,7 +5,10 @@ import {
   CardText,
   CardBody,
   CardTitle,
-} from "reactstrap";
+  Breadcrumb, 
+  BreadcrumbItem 
+} from 'reactstrap';
+import { Link } from 'react-router-dom';
 
 function RenderCampsite({campsite}) { //This funciton is receiving a props object from CampsiteInfo below, we want the "campsite" property of the object, so use curly braces to destructure it.
   return (
@@ -13,7 +16,6 @@ function RenderCampsite({campsite}) { //This funciton is receiving a props objec
       <Card>
         <CardImg top src={campsite.image} alt={campsite.name} />
         <CardBody>
-          <CardTitle>{campsite.name}</CardTitle>
           <CardText>{campsite.description}</CardText>
         </CardBody>
       </Card>
@@ -48,6 +50,16 @@ function CampsiteInfo(props) { //This is recieving a campsite object as props fr
   if (props.campsite) {
     return (
       <div className="container">
+        <div className="row">
+          <div className="col">
+              <Breadcrumb>
+                  <BreadcrumbItem><Link to="/directory">Directory</Link></BreadcrumbItem>
+                  <BreadcrumbItem active>{props.campsite.name}</BreadcrumbItem> {/* Add text for active link dynamically through props.campsite.name*/}
+              </Breadcrumb>
+              <h2>{props.campsite.name}</h2>{/* Add text for heading dynamically through props.campsite.name*/}
+              <hr />
+          </div>
+        </div>
         <div className="row">
           <RenderCampsite campsite={props.campsite} />
           <RenderComments comments={props.comments} /> {/*Pass the comments array as props (now labeled "comments") to RenderComment. It was passed from Main component to CampsiteInfo component, and now is being passed to RenderComments component. This USED TO pass the "comments" array from the campsites.js file into the RenderComments method/function. "comments" array WAS being made available as "props" to this CampsiteInfoComponent.js file because the CampsiteInfo component is called with an attribute named "campsite" inside the JSX tag in the MainComponent.js file, which passes it as "props" to this file.*/}

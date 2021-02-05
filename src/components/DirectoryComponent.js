@@ -1,4 +1,5 @@
-import { Card, CardImg, CardImgOverlay, CardTitle } from 'reactstrap';
+import React from 'react';
+import { Card, CardImg, CardImgOverlay, CardTitle, Breadcrumb, BreadcrumbItem } from 'reactstrap';
 import { Link } from 'react-router-dom';
 
 function RenderDirectoryItem({campsite}){//Will be responsible for rendering each card with different campsite details. Fuctional components only accept 1 props object as an argument. Props object has been destructured in the argument list here.
@@ -25,6 +26,16 @@ function Directory(props) {
 
     return( //this is the return that sends data from this component to the parent component.  All other returns are just passing data around within this component.
         <div className="container">
+            <div className="row">
+                <div className="col">
+                    <Breadcrumb>
+                        <BreadcrumbItem><Link to="/home">Home</Link></BreadcrumbItem>
+                        <BreadcrumbItem active>Directory</BreadcrumbItem>
+                    </Breadcrumb>
+                    <h2>Directory</h2>
+                    <hr />
+                </div>
+            </div>
             <div className="row">
                 {directory}
             </div>
