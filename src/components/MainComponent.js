@@ -5,6 +5,7 @@ import Header from './HeaderComponent';
 import Footer from './FooterComponent';
 import Home from './HomeComponent';
 import Contact from './ContactComponent';
+import About from './AboutComponent';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { CAMPSITES } from '../shared/campsites';
 import { COMMENTS } from '../shared/comments';
@@ -50,8 +51,9 @@ class Main extends Component {
                 <Switch> {/*These route components are acting like the Case keywords in a JS Switch statment. Any routing request that comes through will go through this Switch component until it finds a matching route, if there are none, it will end up at the Redirect component*/}
                     <Route path='/home' component={HomePage} />{/*This will route any traffic that tries to go to the path Home to the HomePage component.*/}
                     <Route exact path='/directory' render={() => <Directory campsites={this.state.campsites} /> } /> {/*Pass all info in campsites.JS file down as props by setting a custom attribute called "campsites".  The Route command: Matches exact path which is directory, render attribute is set up with an arrow function that returns the Directory component. Render & arrow function are needed because we are passing props within a Routing component. Render & arrow are a good syntax to do this by.  So this is saying when encountering the path '/directory', render the directory component & pass it props. As opposed the the Route for /home and /contactus which use "component=" to directly render the specified Component without passing it any state data as props*/}
-                    <Route exact path='/contactus' component={Contact} /> {/*Watch the browser address bar and whenever the address bar matches contactus, then show the Contact component.*/}
+                    <Route exact path='/contactus' component={Contact} /> {/*Watch the browser address bar and whenever the address bar matches contactus (address bar is changed by the corresponding <Link> component), then show the Contact component.*/}
                     <Route path='/directory/:campsiteId' component={CampsiteWithId} /> {/* Colon tells the router what follows the forward slash is going to be a parameter, and then it takes whatever that is and puts it inside the property "campsiteId". Then the Route component itself stores an object named "match" in its state which has as a property and object named "params", the campsiteId gets stored as a property of that "params" object. Make the route render a component "CampsiteWithId", the Routes "match" object gets passed to the "CampsiteWithId" component automtically.*/} 
+                    <Route exact path='/aboutus' render={() => <About partners={this.state.partners} /> } /> {/*Watch the browser address bar and whenever the address bar matches aboutus (address bar is changed by the corresponding <Link> component), then render the About component and pass all info in partners.JS file down as props by setting a custom attribute called "partners".*/}
                     <Redirect to='/home' /> {/*this redirect component acts as a catch all (like default statement in a JS Switch function)*/}
                 </Switch>
                 <Footer />
