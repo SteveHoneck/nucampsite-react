@@ -84,7 +84,7 @@ class Contact extends Component {
                                         className="form-control" //Added due to using Redux. Previously, the <Input> from ReactStrap took care of this class.
                                         validators={{ //Add this property for Redux form validation. For its value, we give it an object of the functions that are valid for that component.
                                             required,
-                                            minLength: minLength(2), //Not sure how these are working with the minLength and maxLength funcitons.
+                                            minLength: minLength(2), //The "validators" object and behind-the-scene code is set up through React-Redux-Form. It is set up to correspond with the "messages" property in the <Errors> component.  Here, we are defining a term called "minLength" and assigning it a value withch is the result of passing "2" as an argument into the "minLength()" function that we wrote, the function returns true or false.
                                             maxLength: maxLength(15)
                                         }} 
                                     />
@@ -93,7 +93,7 @@ class Contact extends Component {
                                         model=".firstName" //Must match the model of the corresponding <Control> component
                                         show="touched" //Cause the form fill only show error messages if it's been touched by the user
                                         component="div" //Tells React-redux-form to wrap each error message in a <div>
-                                        messages= {{//These are the error messages that are shown for the functions in "validators" if they return false
+                                        messages= {{//These are the error messages that are shown for the functions in "validators" if they return false.  "messages" object and behind-the-scene code is set up through React-Redux-Form. It looks for the corresponding property in the "validators" object. If that property is false, the error message is displayed. 
                                             required: 'Required',
                                             minLength: 'Must be at least 2 characters',
                                             maxLength: 'Must be 15 characters or less'
@@ -202,7 +202,7 @@ class Contact extends Component {
                                 <Col md={10}>
                                     {/*was Input type="textarea" when not using React-Redux-Form*/} <Control.textarea model=".feedback" id="feedback" name="feedback"
                                         rows="12"
-                                        ClassName="form-control"
+                                        className="form-control"
                                     />
                                 </Col>
                             </Row>
