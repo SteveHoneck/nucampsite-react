@@ -8,6 +8,7 @@ import Contact from './ContactComponent';
 import About from './AboutComponent';
 import { Switch, Route, Redirect, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { addComment } from '../redux/ActionCreators'; //Imports the "addComment" function from ActionCreators
 
 
 const mapStateToProps = state => { //Get state from Redux by setting up this function. Take "state" as an argument & return the data arrays as props
@@ -17,6 +18,10 @@ const mapStateToProps = state => { //Get state from Redux by setting up this fun
         partners: state.partners,
         promotions: state.promotions
     };
+};
+
+const mapDispatchToProps = { //Added to use the ActionCreators. Can be set up as a function or as an object (as seen here).
+    addComment: (campsiteId, rating, author, text) => (addComment(campsiteId, rating, author, text)) //A constant with one property of "addComment" thathas an arrow function with the paramater list of "campsiteId, rating, author, text" and the arrow function's body calls the Action Creator "addComment" & passes in the data from the parameter list.
 };
 
 class Main extends Component {
@@ -38,6 +43,7 @@ class Main extends Component {
                 <CampsiteInfo //Need to pass selected campsite object and an array of all the comments for the campsite.
                     campsite={this.props.campsites.filter(campsite => campsite.id === +match.params.campsiteId)[0]}  //Changed "state" to "props" for Redux, note may be outdated: The full list of campsites is inside Main component's state, it can be accessed with this.state.campsites, then we filter it to look for the campsite object that has the Id that matches what is stored in "match.params.campsiteId" which is stored as a string, so it must be converted to a number using whats called the unary + operator (). Filter returns an array, and we want the campsite object, use [0] to get that entire object. 
                     comments={this.props.comments.filter(comment => comment.campsiteId === +match.params.campsiteId)} //Same for comments, but want the whole comment array, so don't use [0].
+                    addComment={this.props.addComment} //Pass the "addComment" function to this component as a prop because of the "mapDispatchToProps" in the "connect" function.
                 />
             );
         }
@@ -59,4 +65,4 @@ class Main extends Component {
     };
 }
 
-export default withRouter(connect(mapStateToProps)(Main));  //Add connect()(). All this allows the Main component to take it's state from the Redux store. Wrap export withRouter so that ReactRouter still works with the Redux changes.
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Main));  //Add connect()(). All this allows the Main component to take it's state from the Redux store. "mapDispatchToProps" was added as the second argument in order to make the "addComment" action creator function available inside the MainComponent as a prop. Wrap export withRouter so that ReactRouter still works with the Redux changes.

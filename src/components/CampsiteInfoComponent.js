@@ -29,7 +29,7 @@ function RenderCampsite({campsite}) { //This funciton is receiving a props objec
   );
 }
 
-function RenderComments({comments}) {//This funciton is receiving a props object from CampsiteInfo function below, we want the "comments" property of the object, so use curly braces to destructure it.
+function RenderComments({comments, addComment, campsiteId}) {//This funciton is receiving a props object from CampsiteInfo function below, we want the "comments" property for use in the function below, so use curly braces to destructure it. The "addComment, campsiteId" properties are being destructured and just passed along to the <CommentForm> component.
   if (comments) { //if argument comments contain something (as opposed to nothing which would evaluate to falsy) enter loop, otherwise return a blank <div>.
     return (
         <div className="col-md-5 m-1">
@@ -46,7 +46,7 @@ function RenderComments({comments}) {//This funciton is receiving a props object
               </div>
             );
           })}
-          <CommentForm />
+          <CommentForm campsiteId={campsiteId} addComment={addComment} />
         </div>
     );
   }
@@ -69,7 +69,11 @@ function CampsiteInfo(props) { //This is recieving a campsite object as props fr
         </div>
         <div className="row">
           <RenderCampsite campsite={props.campsite} />
-          <RenderComments comments={props.comments} /> {/*Pass the comments array as props (now labeled "comments") to RenderComment. It was passed from Main component to CampsiteInfo component, and now is being passed to RenderComments component. This USED TO pass the "comments" array from the campsites.js file into the RenderComments method/function. "comments" array WAS being made available as "props" to this CampsiteInfoComponent.js file because the CampsiteInfo component is called with an attribute named "campsite" inside the JSX tag in the MainComponent.js file, which passes it as "props" to this file.*/}
+          <RenderComments 
+            comments={props.comments} ///*Pass the comments array as props (now labeled "comments") to RenderComment. It was passed from Main component to CampsiteInfo component, and now is being passed to RenderComments component. This USED TO pass the "comments" array from the campsites.js file into the RenderComments method/function. "comments" array WAS being made available as "props" to this CampsiteInfoComponent.js file because the CampsiteInfo component is called with an attribute named "campsite" inside the JSX tag in the MainComponent.js file, which passes it as "props" to this file.*/
+            addComment={props.addComment} //<CampsiteInfo> is recieveing this as a prop from main as a result of adding Redux actions, and it is in turn getting passed to <RenderComments>
+            campsiteId={props.campsite.id} //<CampsiteInfo> is recieveing this as a prop from main as a result of adding Redux actions, and it is in turn getting passed to <RenderComments>
+          /> 
         </div>
       </div>
     );
@@ -119,12 +123,9 @@ class CommentForm extends Component {
   } 
   
   submitComment = (values) => {
-    console.log(values); //Could JSON.stringify on this, but not required.
-    alert(JSON.stringify(values)); //String is expected, alert can not display the "values" object 
     this.toggleModal();
+    this.props.addComment(this.props.campsiteId, values.rating, values.author, values.text);//When the form is submitted, the addComment action creator will create an action using the values from this form. Then that action will get dispatched to it's reducer which will update the state
   } 
-
-
 
   render() {
     return(
