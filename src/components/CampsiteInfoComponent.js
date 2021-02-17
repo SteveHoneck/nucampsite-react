@@ -15,6 +15,7 @@ import {
 } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { Control, LocalForm, Errors } from 'react-redux-form';
+import { Loading } from './LoadingComponent';
 
 function RenderCampsite({campsite}) { //This funciton is receiving a props object from CampsiteInfo below, we want the "campsite" property of the object, so use curly braces to destructure it.
   return (
@@ -53,7 +54,27 @@ function RenderComments({comments, addComment, campsiteId}) {//This funciton is 
   return <div />;
 }
 
-function CampsiteInfo(props) { //This is recieving a campsite object as props from MainComponent which is a campsite from the campsites.js file that was filtered in MainComponent.js (THIS MAY NOT BE TRUE ANYMORE???).
+function CampsiteInfo(props) { //This is recieving a campsite, isLoading, errMess objects as props from MainComponent. campsite is a campsite from the campsites.js file that was filtered in MainComponent.js (THIS MAY NOT BE TRUE ANYMORE???).
+  if (props.isLoading) { //Added due to Thunk, if isLoading is true, return the <Loading> component
+    return ( //a Bootstrap Grid setup is expected to be returned
+        <div className="container">
+            <div className="row">
+                <Loading />
+            </div>
+        </div>
+    );
+  }
+  if (props.errMess) {//Added due to Thunk, if errMess is true, return the errMess object
+    return ( //a Bootstrap Grid setup is expected to be returned
+        <div className="container">
+            <div className="row">
+                <div className="col">
+                    <h4>{props.errMess}</h4>
+                </div>
+            </div>
+        </div>
+    );
+  }
   if (props.campsite) {
     return (
       <div className="container">

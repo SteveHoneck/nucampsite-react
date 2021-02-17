@@ -1,4 +1,6 @@
-import { createStore, combineReducers } from 'redux';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
+import thunk from 'redux-thunk';
+import logger from 'redux-logger';
 //import separate reducers that we created from splitting the reducers
 import { Campsites } from './campsites';
 import { Comments } from './comments';
@@ -12,7 +14,8 @@ export const ConfigureStore = () => { //Named export
             comments: Comments,
             partners: Partners,
             promotions: Promotions
-        }) 
+        }),
+        applyMiddleware(thunk, logger) //"createStore" function will take the "applyMiddleware" function as a second argument so that thunk & logger can be used.  This is all that is required for logger.
         //window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()   //ADD THIS TO USE DEV TOOLS IN CHROME
     );
 

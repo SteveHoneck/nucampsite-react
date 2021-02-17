@@ -8,7 +8,7 @@ import Contact from './ContactComponent';
 import About from './AboutComponent';
 import { Switch, Route, Redirect, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { addComment } from '../redux/ActionCreators'; //Imports the "addComment" function from ActionCreators
+import { addComment, fetchCampsites } from '../redux/ActionCreators'; //Imports the "addComment" function from ActionCreators
 
 
 const mapStateToProps = state => { //Get state from Redux by setting up this function. Take "state" as an argument & return the data arrays as props
@@ -21,17 +21,25 @@ const mapStateToProps = state => { //Get state from Redux by setting up this fun
 };
 
 const mapDispatchToProps = { //Added to use the ActionCreators. Can be set up as a function or as an object (as seen here).
-    addComment: (campsiteId, rating, author, text) => (addComment(campsiteId, rating, author, text)) //A constant with one property of "addComment" thathas an arrow function with the paramater list of "campsiteId, rating, author, text" and the arrow function's body calls the Action Creator "addComment" & passes in the data from the parameter list.
+    addComment: (campsiteId, rating, author, text) => (addComment(campsiteId, rating, author, text)),  //"mapDispatchToProps" is constant with one property of "addComment" that has an arrow function with the paramater list of "campsiteId, rating, author, text" and the arrow function's body calls the Action Creator "addComment" & passes in the data from the parameter list.
+    fetchCampsites: () => (fetchCampsites()) //"mapDispatchToProps" is constant with another property of "fetchCampsites". This property is an Arrow function with no arguments that calls the "fetchCampsites" action creator. The "fetchCampsites" action creator is now available to the MainComponent as props.
 };
 
 class Main extends Component {
+
+    //Want to fetch the campsite data as soon as the Main component is rendered to the DOM, so the best place to do that is in a special React method "componentDidMount". Built in React Lifecycle Method (certian points when it gets created, update, and removed. Each point has certain method associated with it).
+    componentDidMount() {
+        this.props.fetchCampsites(); 
+    }
 
     render() {
         
         const HomePage = () => { //Changed "state" to "props" for Redux, note may be outdated: Locally scoped component that is only accessable inside the Main component. It is just acting as a wrapper for the Home component now, more will be added later. Set as an arrow function instead of a function declaration because of a feature of arrow functions that has to do with the nature of the "this" keyword inside of arrow functions. Arrow functions inherit the "this" of their parent scope. If we used the function declaration, "this" would not have pointed to the state of the parent class, it would have been undefined.
             return (
                 <Home //Changed "state" to "props" for Redux, note may be outdated: Pass in 3 props, one for each item we want to feature on the home page. Can accomplish by using filter on the 3 arrays by evaluating the "featured" property on the objects in the array.  If "featured" is true, the object will be put into a new array (of 1 object) and pass it as props to the HomeComponent.js file's Home component.  Array index [0] is used to pull that object in index 0 out of the filtered array and pass it so that the entire array is not passed (even though the array is only 1 object).
-                    campsite={this.props.campsites.filter(campsite => campsite.featured)[0]}
+                    campsite={this.props.campsites.campsites.filter(campsite => campsite.featured)[0]} //"this.props.campsites" was holding just an array before using Thunk. Now using Thunk it holds "isLoading", "errMess", and campsites array. "campsites.campsites." is getting the campsites array out of an object also named campsites.
+                    campsitesLoading={this.props.campsites.isLoading} //Due to Thunk Pass the "isLoading" property of the campsite state object as props
+                    campsitesErrMess={this.props.campsites.errMess}//Due to Thunk Pass the "errMess" property of the campsite state object as props
                     promotion={this.props.promotions.filter(promotion => promotion.featured)[0]}
                     partner={this.props.partners.filter(partner => partner.featured)[0]}
                 />
@@ -41,7 +49,9 @@ class Main extends Component {
         const CampsiteWithId = ({match}) => { //Changed "state" to "props" for Redux, note may be outdated: The "this" kewyord needs to refer to the Main component's state. So the function will be set up as an arrow function which recieves "props" from the root component App because Main receives props from App, so destructure the "match" object from Route component out from props in the argument list.
             return(
                 <CampsiteInfo //Need to pass selected campsite object and an array of all the comments for the campsite.
-                    campsite={this.props.campsites.filter(campsite => campsite.id === +match.params.campsiteId)[0]}  //Changed "state" to "props" for Redux, note may be outdated: The full list of campsites is inside Main component's state, it can be accessed with this.state.campsites, then we filter it to look for the campsite object that has the Id that matches what is stored in "match.params.campsiteId" which is stored as a string, so it must be converted to a number using whats called the unary + operator (). Filter returns an array, and we want the campsite object, use [0] to get that entire object. 
+                    campsite={this.props.campsites.campsites.filter(campsite => campsite.id === +match.params.campsiteId)[0]}  //Changed "state" to "props" for Redux, note may be outdated: The full list of campsites is inside Main component's state, it can be accessed with this.state.campsites, then we filter it to look for the campsite object that has the Id that matches what is stored in "match.params.campsiteId" which is stored as a string, so it must be converted to a number using whats called the unary + operator (). Filter returns an array, and we want the campsite object, use [0] to get that entire object. Due to Thunk, "campsites.campsites." is getting the campsites array out of an object also named campsites.
+                    isLoading={this.props.campsites.isLoading} //Due to Thunk Pass the "isLoading" property of the campsite state object as props
+                    errMess={this.props.campsites.errMess}//Due to Thunk Pass the "errMess" property of the campsite state object as props
                     comments={this.props.comments.filter(comment => comment.campsiteId === +match.params.campsiteId)} //Same for comments, but want the whole comment array, so don't use [0].
                     addComment={this.props.addComment} //Pass the "addComment" function to this component as a prop because of the "mapDispatchToProps" in the "connect" function.
                 />

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, CardImg, CardImgOverlay, CardTitle, Breadcrumb, BreadcrumbItem } from 'reactstrap';
 import { Link } from 'react-router-dom';
+import { Loading } from './LoadingComponent';
 
 function RenderDirectoryItem({campsite}){//Will be responsible for rendering each card with different campsite details. Fuctional components only accept 1 props object as an argument. Props object has been destructured in the argument list here.
     return (
@@ -16,7 +17,7 @@ function RenderDirectoryItem({campsite}){//Will be responsible for rendering eac
 } 
 
 function Directory(props) {
-    const directory = props.campsites.map(campsite => { //Map goes through all the campsites from the local state of the MainComponent.js file and will make a new array where each array item contains the below set of JSX elements but using a different campsite for each item. Then the whole array is rendered insid the bootstrap column in the return function below. Campsites is passed to this file through the "props" command.
+    const directory = props.campsites.campsites.map(campsite => { //Map goes through all the campsites from the local state of the MainComponent.js file and will make a new array where each array item contains the below set of JSX elements but using a different campsite for each item. Then the whole array is rendered insid the bootstrap column in the return function below. Campsites is passed to this file from XXXXXX????? through the "props" command.
         return (//not the same return from the whole component, only for the arrow function. key= added as the unique key for topmost element as required/recommended by React 
             <div key={campsite.id} className = "col-md-5 m-1">
                 <RenderDirectoryItem campsite={campsite} /> {/*Call RenderDirectoryItem functional component and pass it campsite (coming from .map method I think?)*/}
@@ -24,6 +25,26 @@ function Directory(props) {
         );
     });
 
+    if (props.campsites.isLoading) {//Added due to Thunk, if isLoading is true, return the <Loading> component
+        return (//a Bootstrap Grid setup is expected to be returned
+            <div className="container">
+                <div className="row">
+                    <Loading />
+                </div>
+            </div>
+        );
+    }
+    if (props.campsites.errMess) {//Added due to Thunk, if errMess is true, return the errMess object
+        return (//a Bootstrap Grid setup is expected to be returned
+            <div className="container">
+                <div className="row">
+                    <div className="col">
+                        <h4>{props.campsites.errMess}</h4>
+                    </div>
+                </div>
+            </div>
+        );
+    }
     return( //this is the return that sends data from this component to the parent component.  All other returns are just passing data around within this component.
         <div className="container">
             <div className="row">
