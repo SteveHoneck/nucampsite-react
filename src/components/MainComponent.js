@@ -8,6 +8,7 @@ import Contact from './ContactComponent';
 import About from './AboutComponent';
 import { Switch, Route, Redirect, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { actions } from 'react-redux-form'; //Imported to make an action creator named "actions.reset" available to us.
 import { addComment, fetchCampsites } from '../redux/ActionCreators'; //Imports the "addComment" function from ActionCreators
 
 
@@ -22,7 +23,8 @@ const mapStateToProps = state => { //Get state from Redux by setting up this fun
 
 const mapDispatchToProps = { //Added to use the ActionCreators. Can be set up as a function or as an object (as seen here).
     addComment: (campsiteId, rating, author, text) => (addComment(campsiteId, rating, author, text)),  //"mapDispatchToProps" is constant with one property of "addComment" that has an arrow function with the paramater list of "campsiteId, rating, author, text" and the arrow function's body calls the Action Creator "addComment" & passes in the data from the parameter list.
-    fetchCampsites: () => (fetchCampsites()) //"mapDispatchToProps" is constant with another property of "fetchCampsites". This property is an Arrow function with no arguments that calls the "fetchCampsites" action creator. The "fetchCampsites" action creator is now available to the MainComponent as props.
+    fetchCampsites: () => (fetchCampsites()), //"mapDispatchToProps" is constant with another property of "fetchCampsites". This property is an Arrow function with no arguments that calls the "fetchCampsites" action creator. The "fetchCampsites" action creator is now available to the MainComponent as props.
+    resetFeedbackForm: () => (actions.reset('feedbackForm')) //Added for React Redux Form. "actions.reset" is built in method/function from react-redux-form library
 };
 
 class Main extends Component {
@@ -64,7 +66,7 @@ class Main extends Component {
                 <Switch> {/*These route components are acting like the Case keywords in a JS Switch statment. Any routing request that comes through will go through this Switch component until it finds a matching route, if there are none, it will end up at the Redirect component*/}
                     <Route path='/home' component={HomePage} />{/*This will route any traffic that tries to go to the path Home to the HomePage component.*/}
                     <Route exact path='/directory' render={() => <Directory campsites={this.props.campsites} /> } /> {/*Changed "state" to "props" for Redux, note may be outdated: Pass all info in campsites.JS file down as props by setting a custom attribute called "campsites".  The Route command: Matches exact path which is directory, render attribute is set up with an arrow function that returns the Directory component. Render & arrow function are needed because we are passing props within a Routing component. Render & arrow are a good syntax to do this by.  So this is saying when encountering the path '/directory', render the directory component & pass it props. As opposed the the Route for /home and /contactus which use "component=" to directly render the specified Component without passing it any state data as props*/}
-                    <Route exact path='/contactus' component={Contact} /> {/*Watch the browser address bar and whenever the address bar matches contactus (address bar is changed by the corresponding <Link> component), then show the Contact component.*/}
+                    <Route exact path='/contactus' render={() => <Contact resetFeedbackForm={this.props.resetFeedbackForm} />} /> {/*Watch the browser address bar and whenever the address bar matches contactus (address bar is changed by the corresponding <Link> component), then show the Contact component. Pass the "resetFeedbackForm" to the Contact component as a prop*/}
                     <Route path='/directory/:campsiteId' component={CampsiteWithId} /> {/* Colon tells the router what follows the forward slash is going to be a parameter, and then it takes whatever that is and puts it inside the property "campsiteId". Then the Route component itself stores an object named "match" in its state which has as a property and object named "params", the campsiteId gets stored as a property of that "params" object. Make the route render a component "CampsiteWithId", the Routes "match" object gets passed to the "CampsiteWithId" component automtically.*/} 
                     <Route exact path='/aboutus' render={() => <About partners={this.props.partners} /> } /> {/*Changed "state" to "props" for Redux, note may be outdated: Watch the browser address bar and whenever the address bar matches aboutus (address bar is changed by the corresponding <Link> component), then render the About component and pass all info in partners.JS file down as props by setting a custom attribute called "partners".*/}
                     <Redirect to='/home' /> {/*this redirect component acts as a catch all (like default statement in a JS Switch function)*/}

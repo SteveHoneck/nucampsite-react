@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Breadcrumb, BreadcrumbItem,
     Button, Label, Col, Row } from 'reactstrap';
 import { Link } from 'react-router-dom';
-import { Control, LocalForm, Errors } from 'react-redux-form';
+import { Control, Form, Errors, actions } from 'react-redux-form'; //Exercise: React Redux Form Revisited changed "LocalForm" to "Form" and added "actions"
 
 const required = val => val && val.length; //recieves the value as an argument (will be a string value because all form inputs are recieved as strings even if they are numbers). Checks to make sure there was a value that was not "undefined" or "null" AND that the length of the string is greater than zero. Makes sure that a field has something in it. If retruns false, it will fail this test and cause an error.
 const maxLength = len => val => !val || (val.length <= len); //The way this function is called later in the file requires that it be a funciton wrapped in a function. First function takes the maximum length then the second funciton takes the value (input string). Then from inside the inner function we return true if the max length has not been exceeded. !val will return true because if there is no value then the max length has not been exceeded OR also return true if the value's length is less than or equal to (<=) the maximum. If both are false, will return false for maxLength meaning failed the test for max length which will create an error.
@@ -23,7 +23,7 @@ class Contact extends Component {
             agree: false,
             contactType: 'By Phone',
             feedback: '',
-            touched: { //Will keep track of wether these 4 fields have been "touched" or not by the user (set up as an object). Using an event called "blur" that fires when a user enters an input field and leaves it.
+            touched: { //Will keep track of whether these 4 fields have been "touched" or not by the user (set up as an object). Using an event called "blur" that fires when a user enters an input field and leaves it.
                 firstName: false,
                 lastName: false,
                 phoneNum: false,
@@ -37,6 +37,7 @@ class Contact extends Component {
     handleSubmit(values) {//set up as console.log for demonstartion purposes. Argument was "event" when using React, changed to "values" for React-Redux-Form use.
         console.log("Current state is: " + JSON.stringify(values));//console.log expects a string. To make a string from a JS object, use JSON.stringify(). Argument was "this.state", changed to "values" for React-Redux-Form use.
         alert("Current state is: " + JSON.stringify(values)); //Argument was "this.state", changed to "values" for React-Redux-Form use.
+        this.props.resetFeedbackForm()//"props.resetFeedbackForm" passed from MainComponent, will make sure that when the form is submitted, the form values are reset to the initial values
     }
 
     render() {
@@ -75,7 +76,7 @@ class Contact extends Component {
                         <hr />
                     </div>
                     <div className="col-md-10">
-                        <LocalForm onSubmit={values => this.handleSubmit(values)}> {/*Entire form gets an onSubmit event handler. Changed from React's <Form> to React-Redux-Form's <LocalForm>. <LocalForm> requires it to be converted to an arrow function and have the "values" object passed to it.*/}
+                        <Form model="feedbackForm" onSubmit={values => this.handleSubmit(values)}> {/*Entire form gets an onSubmit event handler. Changed from React's <Form> to React-Redux-Form's <LocalForm>. <LocalForm> requires it to be converted to an arrow function and have the "values" object passed to it. Then changed to React-Redux-Form's <Form> and had add the model name "feedbackForm" for the form in order to connect it with the state in the redux store. */}
                             <Row className="form-group"> {/*change from <FormGroup row> to a <Row> because we are no longer using the FormGroup component from ReactStrap since that only works with the ReactStrap <Form> which was replaced by <LocalForm>*/}
                                 <Label htmlFor="firstName" md={2}>First Name</Label> {/*htmlFor=" " is the same as using for=" " in normal HTML because "for" in JS is a "for" loop */}
                                 <Col md={10}> {/*ReactStrap syntax, Equivalent to writing BootStrap's <div className="col-md-10">*/}
@@ -213,7 +214,7 @@ class Contact extends Component {
                                     </Button>
                                 </Col>
                             </Row>
-                        </LocalForm>
+                        </Form>
                     </div>
                 </div>
             </div>
