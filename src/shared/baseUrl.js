@@ -1,0 +1,1 @@
+export const baseUrl = 'http://localhost:3001/'; //set to the network address where we are running Json server. This const can be used where ever the server address is needed, if server address ever changes, it only has to be changed here.

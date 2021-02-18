@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, CardImg, CardText, CardBody, CardTitle } from 'reactstrap';
 import { Loading } from './LoadingComponent';
+import { baseUrl } from '../shared/baseUrl'; //Added for Exercies: Fetch from server
 
 
 
@@ -13,7 +14,7 @@ function RenderCard({item, isLoading, errMess}) {//Purely presentational functio
     }
     return( //if neither are truthy, return card component because we can assume campsites data has loaded correctly
         <Card>
-            <CardImg src={item.image} alt={item.name} /> {/*Pulls from the image property and the name property of item object that was passed in  */}
+            <CardImg src={baseUrl + item.image} alt={item.name} /> {/*Pulls from the image property and the name property of item object that was passed in. Tacks the text of the image property to the end of "baseUrl" in order to get the image from the json server  */}
             <CardBody>
                 <CardTitle>{item.name}</CardTitle>{/*Pulls from the name property of item object that was passed in */}
                 <CardText>{item.description}</CardText>{/*Pulls from the description property of item object that was passed in */}
@@ -34,7 +35,11 @@ function Home(props) {
                     /> 
                 </div>
                 <div className="col-md m-1">
-                    <RenderCard item={props.promotion} />
+                    <RenderCard 
+                        item={props.promotion}
+                        isLoading={props.promotionLoading} //Can be passed to the RenderCard component, done for Exercise: Fetch from Server
+                        errMess={props.promotionErrMess} //Can be passed to the RenderCard component, done for Exercise: Fetch from Server
+                    />
                 </div>
                 <div className="col-md m-1">
                     <RenderCard item={props.partner} />

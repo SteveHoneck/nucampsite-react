@@ -16,12 +16,14 @@ import {
 import { Link } from 'react-router-dom';
 import { Control, LocalForm, Errors } from 'react-redux-form';
 import { Loading } from './LoadingComponent';
+import { baseUrl } from '../shared/baseUrl'; //Added for Exercies: Fetch from server
+
 
 function RenderCampsite({campsite}) { //This funciton is receiving a props object from CampsiteInfo below, we want the "campsite" property of the object, so use curly braces to destructure it.
   return (
     <div className="col-md-5 m-1">
       <Card>
-        <CardImg top src={campsite.image} alt={campsite.name} />
+        <CardImg top src={baseUrl + campsite.image} alt={campsite.name} /> {/*Tacks the text of the image property to the end of "baseUrl" in order to get the image from the json server  */}
         <CardBody>
           <CardText>{campsite.description}</CardText>
         </CardBody>

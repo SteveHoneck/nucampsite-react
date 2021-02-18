@@ -2,12 +2,13 @@ import React from 'react';
 import { Card, CardImg, CardImgOverlay, CardTitle, Breadcrumb, BreadcrumbItem } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { Loading } from './LoadingComponent';
+import { baseUrl } from '../shared/baseUrl'; //Added for Exercies: Fetch from server
 
 function RenderDirectoryItem({campsite}){//Will be responsible for rendering each card with different campsite details. Fuctional components only accept 1 props object as an argument. Props object has been destructured in the argument list here.
     return (
         <Card>
             <Link to={`/directory/${campsite.id}`}> {/*Create a dynamic link using vanilla JS (for the string that is passed in must use template literal so we can use JS in the sting so backtics are required). Whatever campsite is selected it is going to link to the /directory/ the id that capsite.*/}
-                <CardImg width="100%" src={campsite.image} alt={campsite.name} />
+                <CardImg width="100%" src={baseUrl + campsite.image} alt={campsite.name} /> {/* Added "baseUrl + " for Exercies: Fetch from server because the image source is now coming from json server*/}
                 <CardImgOverlay>
                     <CardTitle>{campsite.name}</CardTitle>
                 </CardImgOverlay>

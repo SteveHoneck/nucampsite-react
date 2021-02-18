@@ -9,7 +9,7 @@ import About from './AboutComponent';
 import { Switch, Route, Redirect, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { actions } from 'react-redux-form'; //Imported to make an action creator named "actions.reset" available to us.
-import { addComment, fetchCampsites } from '../redux/ActionCreators'; //Imports the "addComment" function from ActionCreators
+import { addComment, fetchCampsites, fetchComments, fetchPromotions } from '../redux/ActionCreators'; //Imports the functions from ActionCreators
 
 
 const mapStateToProps = state => { //Get state from Redux by setting up this function. Take "state" as an argument & return the data arrays as props
@@ -24,14 +24,18 @@ const mapStateToProps = state => { //Get state from Redux by setting up this fun
 const mapDispatchToProps = { //Added to use the ActionCreators. Can be set up as a function or as an object (as seen here).
     addComment: (campsiteId, rating, author, text) => (addComment(campsiteId, rating, author, text)),  //"mapDispatchToProps" is constant with one property of "addComment" that has an arrow function with the paramater list of "campsiteId, rating, author, text" and the arrow function's body calls the Action Creator "addComment" & passes in the data from the parameter list.
     fetchCampsites: () => (fetchCampsites()), //"mapDispatchToProps" is constant with another property of "fetchCampsites". This property is an Arrow function with no arguments that calls the "fetchCampsites" action creator. The "fetchCampsites" action creator is now available to the MainComponent as props.
-    resetFeedbackForm: () => (actions.reset('feedbackForm')) //Added for React Redux Form. "actions.reset" is built in method/function from react-redux-form library
+    resetFeedbackForm: () => (actions.reset('feedbackForm')), //Added for React Redux Form. "actions.reset" is built in method/function from react-redux-form library
+    fetchComments: () => (fetchComments()), //Arrow function that calls the "fetchComments" action creator. 
+    fetchPromotions: () => (fetchPromotions()) //Arrow function that calls the "fetchPromotions" action creator
 };
 
 class Main extends Component {
 
-    //Want to fetch the campsite data as soon as the Main component is rendered to the DOM, so the best place to do that is in a special React method "componentDidMount". Built in React Lifecycle Method (certian points when it gets created, update, and removed. Each point has certain method associated with it).
+    //Want to fetch the campsite, comments, and promotions data as soon as the Main component is rendered to the DOM, so the best place to do that is in a special React method "componentDidMount". Built in React Lifecycle Method (certian points when it gets created, update, and removed. Each point has certain method associated with it).
     componentDidMount() {
-        this.props.fetchCampsites(); 
+        this.props.fetchCampsites();
+        this.props.fetchComments();
+        this.props.fetchPromotions(); 
     }
 
     render() {
@@ -42,7 +46,9 @@ class Main extends Component {
                     campsite={this.props.campsites.campsites.filter(campsite => campsite.featured)[0]} //"this.props.campsites" was holding just an array before using Thunk. Now using Thunk it holds "isLoading", "errMess", and campsites array. "campsites.campsites." is getting the campsites array out of an object also named campsites.
                     campsitesLoading={this.props.campsites.isLoading} //Due to Thunk Pass the "isLoading" property of the campsite state object as props
                     campsitesErrMess={this.props.campsites.errMess}//Due to Thunk Pass the "errMess" property of the campsite state object as props
-                    promotion={this.props.promotions.filter(promotion => promotion.featured)[0]}
+                    promotion={this.props.promotions.promotions.filter(promotion => promotion.featured)[0]} //first promotions points to the promotions object then the 2nd promotions points to the promotions array inside that object
+                    promotionLoading={this.props.promotions.isLoading} //added for exercise: fetch from server
+                    promotionErrMess={this.props.promotions.errMess} //added for exercise: fetch from server
                     partner={this.props.partners.filter(partner => partner.featured)[0]}
                 />
             );
@@ -54,7 +60,8 @@ class Main extends Component {
                     campsite={this.props.campsites.campsites.filter(campsite => campsite.id === +match.params.campsiteId)[0]}  //Changed "state" to "props" for Redux, note may be outdated: The full list of campsites is inside Main component's state, it can be accessed with this.state.campsites, then we filter it to look for the campsite object that has the Id that matches what is stored in "match.params.campsiteId" which is stored as a string, so it must be converted to a number using whats called the unary + operator (). Filter returns an array, and we want the campsite object, use [0] to get that entire object. Due to Thunk, "campsites.campsites." is getting the campsites array out of an object also named campsites.
                     isLoading={this.props.campsites.isLoading} //Due to Thunk Pass the "isLoading" property of the campsite state object as props
                     errMess={this.props.campsites.errMess}//Due to Thunk Pass the "errMess" property of the campsite state object as props
-                    comments={this.props.comments.filter(comment => comment.campsiteId === +match.params.campsiteId)} //Same for comments, but want the whole comment array, so don't use [0].
+                    comments={this.props.comments.comments.filter(comment => comment.campsiteId === +match.params.campsiteId)} //Same for comments, but want the whole comment array, so don't use [0].
+                    commentsErrMess={this.props.comments.errMess} //added for exercise: fetch from server
                     addComment={this.props.addComment} //Pass the "addComment" function to this component as a prop because of the "mapDispatchToProps" in the "connect" function.
                 />
             );
