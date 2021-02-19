@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, CardImg, CardText, CardBody, CardTitle } from 'reactstrap';
 import { Loading } from './LoadingComponent';
 import { baseUrl } from '../shared/baseUrl'; //Added for Exercies: Fetch from server
+import { FadeTransform } from 'react-animation-components'; //Allows us to add both fade and transform effects using the same component
 
 
 
@@ -13,6 +14,11 @@ function RenderCard({item, isLoading, errMess}) {//Purely presentational functio
         return <h4>{errMess}</h4>;
     }
     return( //if neither are truthy, return card component because we can assume campsites data has loaded correctly
+        <FadeTransform //
+        in //"in" attribute is boolean that tells component to run transition when being mounted
+        transformProps={{ //2 sets of {}, becuause first is to embed JS in JSX and second is to make the object
+            exitTransform: 'scale(0.5) translateY(50%)' //transition from initial scale of 50% to the normal value & move vertically. 
+        }}>
         <Card>
             <CardImg src={baseUrl + item.image} alt={item.name} /> {/*Pulls from the image property and the name property of item object that was passed in. Tacks the text of the image property to the end of "baseUrl" in order to get the image from the json server  */}
             <CardBody>
@@ -20,6 +26,7 @@ function RenderCard({item, isLoading, errMess}) {//Purely presentational functio
                 <CardText>{item.description}</CardText>{/*Pulls from the description property of item object that was passed in */}
             </CardBody>
         </Card>
+        </FadeTransform>
     );
 }
 

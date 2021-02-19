@@ -17,17 +17,24 @@ import { Link } from 'react-router-dom';
 import { Control, LocalForm, Errors } from 'react-redux-form';
 import { Loading } from './LoadingComponent';
 import { baseUrl } from '../shared/baseUrl'; //Added for Exercies: Fetch from server
+import { FadeTransform, Fade, Stagger } from 'react-animation-components'; //
 
 
 function RenderCampsite({campsite}) { //This funciton is receiving a props object from CampsiteInfo below, we want the "campsite" property of the object, so use curly braces to destructure it.
   return (
     <div className="col-md-5 m-1">
-      <Card>
-        <CardImg top src={baseUrl + campsite.image} alt={campsite.name} /> {/*Tacks the text of the image property to the end of "baseUrl" in order to get the image from the json server  */}
-        <CardBody>
-          <CardText>{campsite.description}</CardText>
-        </CardBody>
-      </Card>
+      <FadeTransform
+          in
+          transformProps={{
+              exitTransform: 'scale(0.5) translateY(50%)'
+          }}>
+          <Card>
+            <CardImg top src={baseUrl + campsite.image} alt={campsite.name} /> {/*Tacks the text of the image property to the end of "baseUrl" in order to get the image from the json server  */}
+            <CardBody>
+              <CardText>{campsite.description}</CardText>
+            </CardBody>
+          </Card>
+      </FadeTransform>
     </div>
   );
 }
@@ -36,19 +43,23 @@ function RenderComments({comments, postComment, campsiteId}) {//This funciton is
   if (comments) { //if argument comments contain something (as opposed to nothing which would evaluate to falsy) enter loop, otherwise return a blank <div>.
     return (
         <div className="col-md-5 m-1">
-          <h4>Comments</h4>
-          {comments.map(comment => { //Argument "comments" is an array from campsites.js. It is made available/passed into this function by the render function/method below.  JSX can only accept one return value from the .map loop so to make the comment.text and comment.author appear on different lines, they must be wrapped in an outer <div> with <p> and line break <br/> to provide proper spacing. Multiple <div>s can be used around the comment.text and comment.date, but they must be in one outer return <div> (spacing is not as nice with this method).
-            return ( //I did not have this "return" in here & it was working after week 2 workshop, but the lectures had it in here so I added it.
-              <div key={comment.id}>
-                <p>{comment.text} <br /> --{comment.author},{" "}
-                {new Intl.DateTimeFormat("en-US", {
-                  year: "numeric",
-                  month: "short",
-                  day: "2-digit",
-                }).format(new Date(Date.parse(comment.date)))}</p>
-              </div>
-            );
-          })}
+          <h4>Comments</h4>  {/*NOTE FOR <Stagger>, MAKES APP CRASH IF NOTE ADDED ON LINE BELOW: Works on a group of elements. Needs boolean attribute of in*/}
+          <Stagger in>
+            {comments.map(comment => { //Argument "comments" is an array from campsites.js. It is made available/passed into this function by the render function/method below.  JSX can only accept one return value from the .map loop so to make the comment.text and comment.author appear on different lines, they must be wrapped in an outer <div> with <p> and line break <br/> to provide proper spacing. Multiple <div>s can be used around the comment.text and comment.date, but they must be in one outer return <div> (spacing is not as nice with this method).
+              return ( //I did not have this "return" in here & it was working after week 2 workshop, but the lectures had it in here so I added it.
+                <Fade in key={comment.id}> {/*Needs boolean attribute of in. Unique "key" must always go on the top most element (was in the <div> from previous exercise)*/}
+                  <div>
+                    <p>{comment.text} <br /> --{comment.author},{" "}
+                    {new Intl.DateTimeFormat("en-US", {
+                      year: "numeric",
+                      month: "short",
+                      day: "2-digit",
+                    }).format(new Date(Date.parse(comment.date)))}</p>
+                  </div>
+                </Fade>
+              );
+            })}
+          </Stagger>
           <CommentForm campsiteId={campsiteId} postComment={postComment} />
         </div>
     );
