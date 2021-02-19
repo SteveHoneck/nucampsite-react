@@ -4,7 +4,6 @@ import {
   CardImg,
   CardText,
   CardBody,
-  CardTitle,
   Breadcrumb, 
   BreadcrumbItem,
   Button,
@@ -171,7 +170,7 @@ class CommentForm extends Component {
             <LocalForm onSubmit={ (values) => this.submitComment(values) }>
               <div className="form-group">
                 <Label htmlFor="rating">Rating</Label>
-                <Control.select 
+                <Control.Select 
                   model=".rating" 
                   id="rating" 
                   name="rating" 
@@ -181,11 +180,11 @@ class CommentForm extends Component {
                     <option value='3'>3</option>
                     <option value='4'>4</option>
                     <option value='5'>5</option>
-                </Control.select>
+                </Control.Select>
               </div>
               <div className="form-group">
                 <Label htmlFor="author">Your Name</Label>
-                <Control.text 
+                <Control.Text 
                   model=".author" 
                   id="author" 
                   name="author" 
@@ -209,7 +208,7 @@ class CommentForm extends Component {
               </div>
               <div className="form-group">
                 <Label htmlFor="text">Comment</Label>
-                <Control.textarea 
+                <Control.TextArea 
                 model=".text" 
                 id="text" 
                 name="text" 
