@@ -45,3 +45,26 @@ h2 {
 .navbar-dark {
   background-color: #901CAD;
 }
+
+
+/* Four classes below are by React-Transition-Group library (enter, enter-active, exit, exit-active). Must be given a base class name, here, "page-" is used. The CSS classes are just Css classes, the library lets you use any CSS class */ 
+
+.page-enter { /* describe the transition that will happen when you mount a component. Start with opacity 0 and transition to opacity of 1 over 300ms. "ease-out" = start fast and decelerate as ending. */
+  opacity: 0;
+  transform: translateX(-100%) /*Horizontal position set to the left of the page. This and "transform" below cause item to move from left to right.*/
+}
+
+.page-enter-active {
+  opacity: 1;
+  transform: translateX(0%); /*Horizontal position set to the normal position. So with line above, horizontal position goes from -100% (left side) to 0% (normal position)*/
+  transition: 300ms ease-out; 
+}
+
+.page-exit {  /* describe the transition that will happen when you unmount a component. Start with opacity 1 and transition to opacity of 0 over 300ms. "ease-in" = start slow and accelerate as ending.*/
+  opacity: 1;
+}
+
+.page-exit-active {
+  opacity: 0;
+  transition: 300ms ease-in;
+}
