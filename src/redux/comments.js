@@ -12,8 +12,6 @@ export const Comments = (state = { errMess: null, comments: []}, action) => {//D
 
         case ActionTypes.ADD_COMMENT:
             const comment = action.payload; //Create new variable to hold the content of action.payload (the content is an object).
-            comment.id = state.comments.length; //Add an "id" property that will be the length of the comments array that is stored in this part of the state (remember, state is now an object with an error message and an array of comments, so "state.comments" is extracting the array)
-            comment.date = new Date().toISOString(); //Add a "date" property that will be today's date. 
             return {...state, comments: state.comments.concat(comment)}; //Return the new state by using the array "concat" method. This method is a built in JS array method that lets us attach a new item to the end of an array without mutating the original array. A new array is created (the "push" array method would mutate the original array, so we can't use push). This line takes the exisiting state which is an object containing an error message and array of comments objects, & it spreads the existing state but concatonates the new "comment" object to the end of the array then returns the new state to the Redux store.
         default:
             return state;

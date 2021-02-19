@@ -1,15 +1,6 @@
 import * as ActionTypes from './ActionTypes'; //Import action types with wildcard *, that lets us import ALL the named exports at once. "as ActionTypes" defines what is called the ActionTypes namespace.
 import { baseUrl } from '../shared/baseUrl'; 
 
-export const addComment = (campsiteId, rating, author, text) => ({ //Action creator function, must pass in all values that are needed to add a comment. Returns an object that has "type" and "payload" as its properties.
-    type: ActionTypes.ADD_COMMENT, //"ActionTypes." is a namespace defined above, using the "." notation allows us to access the named exports from that file.
-    payload: { //Pass the arguments into a object. In ES6, if the name of a property of an object is the same as its value, the property can be written as "campsiteId" instead of "campsiteId: campsiteId"
-        campsiteId: campsiteId,
-        rating: rating,
-        author: author,
-        text: text
-    }
-});
 
 //Use Redux-thunk to perform an asynchrnoys request to a server (server is not set up in our example) so pretend we are talking to server by simulating a brief delay. After delay, we will add the camsites data to the state.
 export const fetchCampsites = () => dispatch => { //Action creator. Redux-thunk syntax, wrap a function inside a function and pass the store's "dispatch" method into the inner funtion
@@ -83,6 +74,47 @@ export const addComments = comments => ({ //Action creator for adding comments. 
     type: ActionTypes.ADD_COMMENTS,
     payload: comments
 });
+
+export const addComment = comment => ({ //Updates the local redux store. Makes an action with an action type and payload of comment
+    type: ActionTypes.ADD_COMMENT,
+    payload: comment
+});
+
+//Handles asynchronous calls to Fetch and post the comment to the server. Have to make it Thunk by nesting arrow functions.
+export const postComment = (campsiteId, rating, author, text) => dispatch => { //Action creator is using Thunk middle ware so that it can handle asynchronous calls inside it. Must pass in all values that are needed to add a comment. 
+    const newComment = { //Pass the arguments into an object called "newComment"
+        campsiteId: campsiteId,
+        rating: rating,
+        author: author,
+        text: text
+    };
+    newComment.date = new Date().toISOString(); //The date is not being passed in, we are generating a new date property right in the Action Creator, will grab date and time when this part of the code is executed.
+
+    return fetch(baseUrl + 'comments', {//Set up Fetch. Returning a call to Fetch and give it a Url. 
+            method: "POST", //Pass Fetch an optional second argument in the form of an object.
+            body: JSON.stringify(newComment), //Request "body" property will be a json encoded version of the "newComment" object we created above.
+            headers: { //Requet "header" must be an object itself so it can hold more than 1 header
+                "Content-Type": "application/json" //Server knows to expect the "body" to be formatted as json.
+            }
+        })
+        .then(response => { //Handles the resolve / reject from the fetch promise above
+                if (response.ok) {
+                    return response;
+                } else {
+                    const error = new Error(`Error ${response.status}: ${response.statusText}`);
+                    error.response = response;
+                    throw error;
+                }
+            },
+            error => { throw error; } //This is what will happen if the promise is rejected. It will throw an error to the next catch block
+        )
+        .then(response => response.json()) //When a post request is successful, json server will send back the data that you sent but will insert a unique ID along with it. Convert the response back to JS with this ".json" method & dispatch it with the line below
+        .then(response => dispatch(addComment(response))) //Updates the redux store with the JS response created in the line above
+        .catch(error => { //Catches any rejected promises or throws and let us know that something went long
+            console.log('post comment', error.message);
+            alert('Your comment could not be posted\nError: ' + error.message);
+        });
+};
 
 export const fetchPromotions = () => dispatch => { //Thunk. Operates just like the one for "fetchCampsites".
     dispatch(promotionsLoading());

@@ -9,7 +9,7 @@ import About from './AboutComponent';
 import { Switch, Route, Redirect, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { actions } from 'react-redux-form'; //Imported to make an action creator named "actions.reset" available to us.
-import { addComment, fetchCampsites, fetchComments, fetchPromotions } from '../redux/ActionCreators'; //Imports the functions from ActionCreators
+import { postComment, fetchCampsites, fetchComments, fetchPromotions } from '../redux/ActionCreators'; //Imports the functions from ActionCreators
 
 
 const mapStateToProps = state => { //Get state from Redux by setting up this function. Take "state" as an argument & return the data arrays as props
@@ -22,7 +22,7 @@ const mapStateToProps = state => { //Get state from Redux by setting up this fun
 };
 
 const mapDispatchToProps = { //Added to use the ActionCreators. Can be set up as a function or as an object (as seen here).
-    addComment: (campsiteId, rating, author, text) => (addComment(campsiteId, rating, author, text)),  //"mapDispatchToProps" is constant with one property of "addComment" that has an arrow function with the paramater list of "campsiteId, rating, author, text" and the arrow function's body calls the Action Creator "addComment" & passes in the data from the parameter list.
+    postComment: (campsiteId, rating, author, text) => (postComment(campsiteId, rating, author, text)),  //"mapDispatchToProps" is constant with one property of "postComment" that has an arrow function with the paramater list of "campsiteId, rating, author, text" and the arrow function's body calls the Action Creator "postComment" & passes in the data from the parameter list.
     fetchCampsites: () => (fetchCampsites()), //"mapDispatchToProps" is constant with another property of "fetchCampsites". This property is an Arrow function with no arguments that calls the "fetchCampsites" action creator. The "fetchCampsites" action creator is now available to the MainComponent as props.
     resetFeedbackForm: () => (actions.reset('feedbackForm')), //Added for React Redux Form. "actions.reset" is built in method/function from react-redux-form library
     fetchComments: () => (fetchComments()), //Arrow function that calls the "fetchComments" action creator. 
@@ -62,7 +62,7 @@ class Main extends Component {
                     errMess={this.props.campsites.errMess}//Due to Thunk Pass the "errMess" property of the campsite state object as props
                     comments={this.props.comments.comments.filter(comment => comment.campsiteId === +match.params.campsiteId)} //Same for comments, but want the whole comment array, so don't use [0].
                     commentsErrMess={this.props.comments.errMess} //added for exercise: fetch from server
-                    addComment={this.props.addComment} //Pass the "addComment" function to this component as a prop because of the "mapDispatchToProps" in the "connect" function.
+                    postComment={this.props.postComment} //Pass the "postComment" function to this component as a prop because of the "mapDispatchToProps" in the "connect" function.
                 />
             );
         }
