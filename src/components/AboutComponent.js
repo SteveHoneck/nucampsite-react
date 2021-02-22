@@ -1,15 +1,11 @@
 import React from 'react';
 import { Breadcrumb, BreadcrumbItem, Card, CardBody, CardHeader, Media } from 'reactstrap';
 import { Link } from 'react-router-dom';
-
+import { baseUrl } from '../shared/baseUrl'; 
+import { Loading } from './LoadingComponent';
+import { Fade, Stagger } from 'react-animation-components'; 
 
 function About(props) {
-
-    const partners = props.partners.map(partner => { //This map method takes each object from the partners.js file (passed as props from MainComponent.js) and performs the code in "return" to it and stores it in a new array called "partners" (defined in "const partners =").  That array is displayed in line 68 
-        return (
-            <Media tag="li" key={partner.id}><RenderPartner partner={partner} /></Media> //"partner={partner}" is passing along the array item currently being worked on from the .map method, NOT the props passed into the About function
-        );
-    });
 
     return (
         <div className="container">
@@ -63,21 +59,17 @@ function About(props) {
                 <div className="col-12">
                     <h3>Community Partners</h3>
                 </div>
-                <div className="col mt-4">
-                    <Media list>
-                        {partners} {/*Array of partner information from "const partners" above. */}
-                    </Media>
-                </div>
+                <PartnerList partners={props.partners} />
             </div>
         </div>
     );
 }
 
-function RenderPartner({partner}) { //The function is being passed a props object that contains a "partner" object from line 10.  {partner} destructures the "partner" object out of the "props" object so that in the code below, the properties contained within "partner" can be accessed without having to use "props." first.
+function RenderPartner({partner}) { //The function is being passed a props object that contains a "partner" object from line 11.  {partner} destructures the "partner" object out of the "props" object so that in the code below, the properties contained within "partner" can be accessed without having to use "props." first.
     if (partner) {
         return(
             <React.Fragment>
-                <Media object src={partner.image} alt={partner.name} width="150" />
+                <Media object src={baseUrl + partner.image} alt={partner.name} width="150" />
                 <Media body className="ml-5 mb-4">
                     <Media heading>{partner.name}</Media>
                     {partner.description}
@@ -86,6 +78,38 @@ function RenderPartner({partner}) { //The function is being passed a props objec
         );
     }
     return <div />
+}
+
+function PartnerList(props) {
+    const partners = props.partners.partners.map(partner => { //This map method takes each object from the partners.js file (passed as props from MainComponent.js) and performs the code in "return" to it and stores it in a new array called "partners" (defined in "const partners ="). 
+        return ( //NOTE FOR <Media> LINE, NOTE CAUSES ERROR ON THAT LINE: //"partner={partner}" is passing along the array item currently being worked on from the .map method, NOT the props passed into the About function
+            <Fade in>
+                <Media tag="li" key={partner.id}><RenderPartner partner={partner} /></Media> 
+            </Fade>
+        );
+    });
+
+    if (props.partners.isLoading) {
+        return <Loading />;
+    }
+    if (props.partners.errMess) {
+        return (
+            <div className="col">
+                <h4>{props.partners.errMess}</h4>
+            </div>
+        )
+    }
+    
+    return (
+        <div className="col mt-4">
+            <Media list>
+                <Stagger in>
+                    {partners}
+                </Stagger>
+            </Media>
+        </div>
+    )
+
 }
 
 export default About;

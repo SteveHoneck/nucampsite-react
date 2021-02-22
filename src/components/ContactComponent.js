@@ -34,11 +34,10 @@ class Contact extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);//binds "this" for handleSubmit method
     }
      
-    handleSubmit(values) {//set up as console.log for demonstartion purposes. Argument was "event" when using React, changed to "values" for React-Redux-Form use.
-        console.log("Current state is: " + JSON.stringify(values));//console.log expects a string. To make a string from a JS object, use JSON.stringify(). Argument was "this.state", changed to "values" for React-Redux-Form use.
-        alert("Current state is: " + JSON.stringify(values)); //Argument was "this.state", changed to "values" for React-Redux-Form use.
-        this.props.resetFeedbackForm()//"props.resetFeedbackForm" passed from MainComponent, will make sure that when the form is submitted, the form values are reset to the initial values
-    }
+    handleSubmit(values) {//Argument was "event" when using React, changed to "values" for React-Redux-Form use.
+        this.props.postFeedback(values);
+        this.props.resetFeedbackForm();//"props.resetFeedbackForm" passed from MainComponent, will make sure that when the form is submitted, the form values are reset to the initial values
+    };
 
     render() {
         
@@ -80,7 +79,7 @@ class Contact extends Component {
                             <Row className="form-group"> {/*change from <FormGroup row> to a <Row> because we are no longer using the FormGroup component from ReactStrap since that only works with the ReactStrap <Form> which was replaced by <LocalForm>*/}
                                 <Label htmlFor="firstName" md={2}>First Name</Label> {/*htmlFor=" " is the same as using for=" " in normal HTML because "for" in JS is a "for" loop */}
                                 <Col md={10}> {/*ReactStrap syntax, Equivalent to writing BootStrap's <div className="col-md-10">*/}
-                                    <Control.Text model=".firstName" id="firstName" name="firstName" //usual attributes for forms are required (except type="text" is no longer needed because Control.text covers that attribute, it was needed when the element was a <Input>). "model" attribute added to tell Redux that the value for the field will be stored in the state under the property name of whatever model=".name" is. Value in the "model" attribute will always be the same as the "name" attribute.
+                                    <Control.text model=".firstName" id="firstName" name="firstName" //usual attributes for forms are required (except type="text" is no longer needed because Control.text covers that attribute, it was needed when the element was a <Input>). "model" attribute added to tell Redux that the value for the field will be stored in the state under the property name of whatever model=".name" is. Value in the "model" attribute will always be the same as the "name" attribute.
                                         placeholder="First Name"
                                         className="form-control" //Added due to using Redux. Previously, the <Input> from ReactStrap took care of this class.
                                         validators={{ //Add this property for Redux form validation. For its value, we give it an object of the functions that are valid for that component.
@@ -105,7 +104,7 @@ class Contact extends Component {
                             <Row className="form-group">
                                 <Label htmlFor="lastName" md={2}>Last Name</Label>
                                 <Col md={10}>
-                                    <Control.Text model=".lastName" id="lastName" name="lastName"
+                                    <Control.text model=".lastName" id="lastName" name="lastName"
                                         placeholder="Last Name"
                                         className="form-control"
                                         validators={{ 
@@ -130,7 +129,7 @@ class Contact extends Component {
                             <Row className="form-group">
                                 <Label htmlFor="phoneNum" md={2}>Phone</Label>
                                 <Col md={10}>
-                                    <Control.Text model=".phoneNum" id="phoneNum" name="phoneNum"
+                                    <Control.text model=".phoneNum" id="phoneNum" name="phoneNum"
                                         placeholder="Phone number"
                                         className="form-control"
                                         validators={{ 
@@ -157,7 +156,7 @@ class Contact extends Component {
                             <Row className="form-group">
                                 <Label htmlFor="email" md={2}>Email</Label>
                                 <Col md={10}>
-                                    <Control.Text model=".email" id="email" name="email"
+                                    <Control.text model=".email" id="email" name="email"
                                         placeholder="Email"
                                         className="form-control"
                                         validators={{ 
@@ -181,7 +180,7 @@ class Contact extends Component {
                                 <Col md={{size: 4, offset: 2}}> {/*giving this an object that includes a size and an offset.  To define that object, a second set of {} must be used.  Set both the responsive size and the responsive offset at the same time. Equivlent to BootStrap class="col-md-4 offset-md-2"*/}
                                     <div className="form-check"> {/*Turn into this from <FormGroup check> due to change to React-Redux-Form*/}
                                         <Label check>
-                                            {/*was Input type="checkbox" when not using React-Redux-Form*/} <Control.Checkbox 
+                                            {/*was Input type="checkbox" when not using React-Redux-Form*/} <Control.checkbox 
                                                 model=".agree"
                                                 name="agree"
                                                 className="form-check-input"
@@ -191,17 +190,17 @@ class Contact extends Component {
                                     </div>
                                 </Col>
                                 <Col md={4}>
-                                    {/*was Input type="select" when not using React-Redux-Form*/} <Control.Select model=".contactType" name="contactType" 
+                                    {/*was Input type="select" when not using React-Redux-Form*/} <Control.select model=".contactType" name="contactType" 
                                         className="form-control">
                                         <option>By Phone</option>
                                         <option>By Email</option>
-                                    </Control.Select>
+                                    </Control.select>
                                 </Col>
                             </Row>
                             <Row className="form-group">
                                 <Label htmlFor="feedback" md={2}>Your Feedback</Label>
                                 <Col md={10}>
-                                    {/*was Input type="textarea" when not using React-Redux-Form*/} <Control.TextArea model=".feedback" id="feedback" name="feedback"
+                                    {/*was Input type="textarea" when not using React-Redux-Form*/} <Control.textarea model=".feedback" id="feedback" name="feedback"
                                         rows="12"
                                         className="form-control"
                                     />
