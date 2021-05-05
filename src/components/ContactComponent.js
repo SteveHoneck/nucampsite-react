@@ -14,7 +14,7 @@ class Contact extends Component {
 
     constructor(props) {
         super(props);
-
+//all of this.state removed for integration???
         this.state = {
             firstName: '',
             lastName: '',

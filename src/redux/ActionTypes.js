@@ -13,3 +13,16 @@ export const PROMOTIONS_FAILED = 'PROMOTIONS_FAILED'; //Added for Exercise: Fetc
 export const ADD_PARTNERS = 'ADD_PARTNERS';
 export const PARTNERS_LOADING = 'PARTNERS_LOADING';
 export const PARTNERS_FAILED = 'PARTNERS_FAILED';
+
+//Added for Integration
+export const LOGIN_REQUEST = 'LOGIN_REQUEST';
+export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
+export const LOGIN_FAILURE = 'LOGIN_FAILURE';
+
+export const LOGOUT_REQUEST = 'LOGOUT_REQUEST';
+export const LOGOUT_SUCCESS = 'LOGOUT_SUCCESS';
+export const LOGOUT_FAILURE = 'LOGOUT_FAILURE';
+
+export const FAVORITES_LOADING = 'FAVORITES_LOADING';
+export const FAVORITES_FAILED = 'FAVORITES_FAILED';
+export const ADD_FAVORITES = 'ADD_FAVORITES';

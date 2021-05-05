@@ -83,8 +83,10 @@ function RenderPartner({partner}) { //The function is being passed a props objec
 function PartnerList(props) {
     const partners = props.partners.partners.map(partner => { //This map method takes each object from the partners.js file (passed as props from MainComponent.js) and performs the code in "return" to it and stores it in a new array called "partners" (defined in "const partners ="). 
         return ( //NOTE FOR <Media> LINE, NOTE CAUSES ERROR ON THAT LINE: //"partner={partner}" is passing along the array item currently being worked on from the .map method, NOT the props passed into the About function
-            <Fade in>
-                <Media tag="li" key={partner.id}><RenderPartner partner={partner} /></Media> 
+            <Fade in key={partner.id}>
+                <Media tag="li">
+                    <RenderPartner partner={partner} />
+                </Media> 
             </Fade>
         );
     });
@@ -108,7 +110,7 @@ function PartnerList(props) {
                 </Stagger>
             </Media>
         </div>
-    )
+    );
 
 }
 

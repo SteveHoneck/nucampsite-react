@@ -19,7 +19,7 @@ import { baseUrl } from '../shared/baseUrl'; //Added for Exercies: Fetch from se
 import { FadeTransform, Fade, Stagger } from 'react-animation-components'; 
 
 
-function RenderCampsite({campsite}) { //This funciton is receiving a props object from CampsiteInfo below, we want the "campsite" property of the object, so use curly braces to destructure it.
+function RenderCampsite({campsite, favorite, postFavorite}) { //This funciton is receiving a props object from CampsiteInfo below, we want the "campsite" property of the object, so use curly braces to destructure it. Added for Integration: "favorite, postFavorite"
   return (
     <div className="col-md-5 m-1">
       <FadeTransform
@@ -29,6 +29,16 @@ function RenderCampsite({campsite}) { //This funciton is receiving a props objec
           }}>
           <Card>
             <CardImg top src={baseUrl + campsite.image} alt={campsite.name} /> {/*Tacks the text of the image property to the end of "baseUrl" in order to get the image from the json server  */}
+            <CardImgOverlay> {/*Added for Integration: <CardImgOverlay>*/}
+              <Button outline color="primary" onClick={() => favorite ? console.log('Already favorite') : postFavorite(campsite._id)}>
+                {
+                  favorite ?
+                    <i className="fa fa-heart" />
+                    : 
+                    <i className="fa fa-heart-o" />
+                }
+              </Button>
+            </CardImgOverlay>
             <CardBody>
               <CardText>{campsite.description}</CardText>
             </CardBody>
@@ -48,12 +58,15 @@ function RenderComments({comments, postComment, campsiteId}) {//This funciton is
               return ( //I did not have this "return" in here & it was working after week 2 workshop, but the lectures had it in here so I added it.
                 <Fade in key={comment.id}> {/*Needs boolean attribute of in. Unique "key" must always go on the top most element (was in the <div> from previous exercise)*/}
                   <div>
-                    <p>{comment.text} <br /> --{comment.author},{" "}
-                    {new Intl.DateTimeFormat("en-US", {
-                      year: "numeric",
-                      month: "short",
-                      day: "2-digit",
-                    }).format(new Date(Date.parse(comment.date)))}</p>
+                    <p>{comment.text}</p>
+                    <p>{comment.rating} stars</p>
+                    <p>-- {comment.author.firstname} {comment.author.lastname} , {/*Added for Integration: comment.author.x */} 
+                      {new Intl.DateTimeFormat("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "2-digit",
+                      }).format(new Date(Date.parse(comment.date)))}
+                    </p>
                   </div>
                 </Fade>
               );
@@ -101,7 +114,7 @@ function CampsiteInfo(props) { //This is recieving a campsite, isLoading, errMes
           </div>
         </div>
         <div className="row">
-          <RenderCampsite campsite={props.campsite} />
+          <RenderCampsite campsite={props.campsite} favorite={props.favorite} postFavorite={props.postFavorite}/> {/*Added for Integration: "favorite" & "postFavoirte"*/}
           <RenderComments 
             comments={props.comments} ///*Pass the comments array as props (now labeled "comments") to RenderComment. It was passed from Main component to CampsiteInfo component, and now is being passed to RenderComments component. This USED TO pass the "comments" array from the campsites.js file into the RenderComments method/function. "comments" array WAS being made available as "props" to this CampsiteInfoComponent.js file because the CampsiteInfo component is called with an attribute named "campsite" inside the JSX tag in the MainComponent.js file, which passes it as "props" to this file.*/
             postComment={props.postComment} //<CampsiteInfo> is recieveing this as a prop from main as a result of adding Redux actions, and it is in turn getting passed to <RenderComments>
@@ -113,10 +126,6 @@ function CampsiteInfo(props) { //This is recieving a campsite, isLoading, errMes
   }
   return <div />;
 }
-
-//These are the arrow functions called by the "validator" object in the <Control.xxxx> element
-const maxLength = len => val => !val || (val.length <= len); //This arrow function is equivalent to: function maxLength(len) {code}. So when it gets called below with argument "2", "2" is assigned to "len".
-const minLength = len => val => val && (val.length >= len); //JS Nested functions: When you call minLength, "2" is passed in the argument "len". "val" is what the user types into the field (it can be named anything, "v" for instance). The "validators" object is set up to return 2 values into a nested arrow function, the first being the argument of the function, the second being the user's typed in value (which is why it can be named anything). 
 
 class CommentForm extends Component {
   constructor(props) {
@@ -157,7 +166,7 @@ class CommentForm extends Component {
   
   submitComment = (values) => {
     this.toggleModal();
-    this.props.postComment(this.props.campsiteId, values.rating, values.author, values.text);//When the form is submitted, the postComment action creator will create an action using the values from this form. Then that action will get dispatched to it's reducer which will update the state
+    this.props.postComment(this.props.campsiteId, values.rating, values.text);//When the form is submitted, the postComment action creator will create an action using the values from this form. Then that action will get dispatched to it's reducer which will update the state
   } 
 
   render() {
@@ -181,30 +190,6 @@ class CommentForm extends Component {
                     <option value='4'>4</option>
                     <option value='5'>5</option>
                 </Control.Select>
-              </div>
-              <div className="form-group">
-                <Label htmlFor="author">Your Name</Label>
-                <Control.Text 
-                  model=".author" 
-                  id="author" 
-                  name="author" 
-                  className="form-control"
-                  placeholder="Your Name"
-                  validators={{ 
-                    minLength: minLength(2), 
-                    maxLength: maxLength(15)
-                  }}  
-                />
-                <Errors
-                  className="text-danger"
-                  model=".author"
-                  show="touched"
-                  component="div"
-                  messages= {{
-                    minLength: 'Must be at least 2 characters',
-                    maxLength: 'Must be 15 characters or less'
-                  }}
-                />
               </div>
               <div className="form-group">
                 <Label htmlFor="text">Comment</Label>

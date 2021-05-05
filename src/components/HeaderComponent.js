@@ -16,6 +16,7 @@ class Header extends Component {
         this.toggleNav = this.toggleNav.bind(this);//Binds the event handler using a JS method called .bind() to bind it to the component. This ensures that when toggleNav is called then the "this" keyword inside it referrs correctly to the component.
         this.toggleModal = this.toggleModal.bind(this);
         this.handleLogin = this.handleLogin.bind(this);
+        this.handleLogout = this.handleLogout.bind(this); //Added for Integration
     }
 
     toggleNav() { //Method that will handle when the navbar handler buttons are clicked. When this function is triggered, it will change the state of isNavOpen property to the opposite of it's current state
@@ -30,9 +31,9 @@ class Header extends Component {
         });
     } 
 
-    handleLogin(event) { //not building a backend for authentication, so all this will do is alert us that it's been submitted
-        alert(`Username: ${this.username.value} Password: ${this.password.value} Remember: ${this.remember.checked}`); //These properties were not set in the state like done in a controlled form. They will be pulled using React "innerRef" that is added to the <Input> tags.
+    handleLogin(event) {
         this.toggleModal(); //close the modal
+        this.props.loginUser({username: this.username.value, password: this.password.value}); //Added for Integration
         event.preventDefault(); //prevents the entire page from being rerendered 
     }   
 
@@ -49,6 +50,7 @@ class Header extends Component {
                         </div>
                     </div>
                 </Jumbotron>
+                
                 <Navbar dark sticky="top" expand="md"> {/* "dark" and "sticky" attributes are from ReactStrap documentation. "expand" attribute is from Bootstrap? (I think the video is wrong because if it was from Bootstrap it would be called with className=) */}
                     <div className="container">
                         <NavbarBrand className="mr-auto" href="/"><img src="/assets/images/logo.png" height="30" width="30" alt="NuCamp Logo" /></NavbarBrand> {/* mr-auto helps with alignment.  Logo picture is from public folder which is special who's contents are available at the root level of the App. Don't need to specify the public folder in the image path.*/}
@@ -65,6 +67,11 @@ class Header extends Component {
                                         <i className="fa fa-list fa-lg"/> Directory
                                     </NavLink>
                                 </NavItem>
+                                <NavItem>{/*Added for Integration */}
+                                    <NavLink className="nav-link" to="/favorites">
+                                        <i className="fa fa-heart fa-lg" /> My Favorites
+                                    </NavLink>
+                                </NavItem>
                                 <NavItem>
                                     <NavLink className="nav-link" to="/aboutus"> 
                                         <i className="fa fa-info fa-lg"/> About
@@ -76,11 +83,31 @@ class Header extends Component {
                                     </NavLink>
                                 </NavItem>
                             </Nav>
-                            <span className="navbar-text ml-auto"> {/*These classes will give the button the same text styles as the navigation links and align it horizontall to the right.*/}
-                                <Button outline onClick={this.toggleModal}> {/*Give the button an onClick event handler so it will call the toggleModal() method*/}
-                                    <i className="fa fa-sign-in fa-lg" /> Login
-                                </Button>
-                            </span>
+                            <Nav className="ml-auto" navbar>
+                                <NavItem>
+                                    { !this.props.auth.isAuthenticated //Added for Integration  
+                                        ? //Added for Integration  
+                                        <Button outline onClick={this.toggleModal}> {/*Give the button an onClick event handler so it will call the toggleModal() method*/}
+                                            <i className="fa fa-sign-in fa-lg" /> Login
+                                            {this.props.auth.isFetching //Added for Integration  
+                                                ? <span className="fa fa-spinner fa-pulse fa-fw" />
+                                                : null //Added for Integration  
+                                            }
+                                        </Button>
+                                        ://Added for Integration  
+                                        <div>{/*Added for Integration: entire Logout button*/} 
+                                            <div className="navbar-text mr-3">{this.props.auth.user.username}</div>
+                                            <Button outline onClick={this.handleLogout}>
+                                                <span className="fa fa-sign-out fa-lg"></span> Logout
+                                                {this.props.auth.isFetching 
+                                                    ? <span className="fa fa-spinner fa-pulse fa-fw"/>
+                                                    : null
+                                                }
+                                            </Button>
+                                        </div>
+                                    }
+                                </NavItem>
+                            </Nav>
                         </Collapse>
                     </div>
                 </Navbar>

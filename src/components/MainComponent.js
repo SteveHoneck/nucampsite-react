@@ -9,7 +9,7 @@ import About from './AboutComponent';
 import { Switch, Route, Redirect, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { actions } from 'react-redux-form'; //Imported to make an action creator named "actions.reset" available to us.
-import { postComment, fetchCampsites, fetchComments, fetchPromotions, fetchPartners, postFeedback } from '../redux/ActionCreators'; //Imports the functions from ActionCreators
+import { postComment, fetchCampsites, fetchComments, fetchPromotions, fetchPartners, postFeedback, fetchFavorites, postFavorite, deleteFavorite, loginUser, logoutUser } from '../redux/ActionCreators'; //Imports the functions from ActionCreators
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
 const mapStateToProps = state => { //Get state from Redux by setting up this function. Take "state" as an argument & return the data arrays as props
@@ -17,7 +17,9 @@ const mapStateToProps = state => { //Get state from Redux by setting up this fun
         campsites: state.campsites,
         comments: state.comments,
         partners: state.partners,
-        promotions: state.promotions
+        promotions: state.promotions,
+        favorites: state.favorites, //Added for Integration
+        auth: state.auth//Added for Integration
     };
 };
 
@@ -29,6 +31,11 @@ const mapDispatchToProps = { //Added to use the ActionCreators. Can be set up as
     fetchPromotions: () => (fetchPromotions()), //Arrow function that calls the "fetchPromotions" action creator
     fetchPartners: () => (fetchPartners()),
     postFeedback: (feedback) => (postFeedback(feedback)),
+    loginUser: creds => (loginUser(creds)), //Added for Integration 
+    logoutUser: () => (logoutUser()), //Added for Integration 
+    fetchFavorites: () => (fetchFavorites()), //Added for Integration 
+    postFavorite: (campsiteId) => (postFavorite(campsiteId)), //Added for Integration 
+    deleteFavorite: (campsiteId) => (deleteFavorite(campsiteId)) //Added for Integration 
 };
 
 class Main extends Component {
@@ -39,6 +46,7 @@ class Main extends Component {
         this.props.fetchComments();
         this.props.fetchPromotions(); 
         this.props.fetchPartners();
+        this.props.fetchFavorites();  //Added for Integration 
     }
 
     render() {
@@ -61,6 +69,20 @@ class Main extends Component {
 
         const CampsiteWithId = ({match}) => { //Changed "state" to "props" for Redux, note may be outdated: The "this" kewyord needs to refer to the Main component's state. So the function will be set up as an arrow function which recieves "props" from the root component App because Main receives props from App, so destructure the "match" object from Route component out from props in the argument list.
             return(
+                this.props.auth.isAuthenticated //Added for Integration
+                ? //Added for Integration
+                <CampsiteInfo //Added for Integration, this is displayed if the user is logged in 
+                    campsite={this.props.campsites.campsites.filter(campsite => campsite._id === match.params.campsiteId)[0]}
+                    isLoading={this.props.campsites.isLoading}
+                    errMess={this.props.campsites.errMess}
+                    comments={this.props.comments.comments.filter(comment => comment.campsite === match.params.campsiteId)}
+                    commentsErrMess={this.props.comments.errMess}
+                    postComment={this.props.postComment}
+                    favorite={this.props.favorites.favorites && this.props.favorites.favorites.exists 
+                                ? this.props.favorites.favorites.campsites.some(campsite => campsite._id === match.params.campsiteId) : false}
+                    postFavorite={this.props.postFavorite}
+                />
+                : //if the user is not logged in, this is displayed
                 <CampsiteInfo //Need to pass selected campsite object and an array of all the comments for the campsite.
                     campsite={this.props.campsites.campsites.filter(campsite => campsite.id === +match.params.campsiteId)[0]}  //Changed "state" to "props" for Redux, note may be outdated: The full list of campsites is inside Main component's state, it can be accessed with this.state.campsites, then we filter it to look for the campsite object that has the Id that matches what is stored in "match.params.campsiteId" which is stored as a string, so it must be converted to a number using whats called the unary + operator (). Filter returns an array, and we want the campsite object, use [0] to get that entire object. Due to Thunk, "campsites.campsites." is getting the campsites array out of an object also named campsites.
                     isLoading={this.props.campsites.isLoading} //Due to Thunk Pass the "isLoading" property of the campsite state object as props
@@ -68,13 +90,32 @@ class Main extends Component {
                     comments={this.props.comments.comments.filter(comment => comment.campsiteId === +match.params.campsiteId)} //Same for comments, but want the whole comment array, so don't use [0].
                     commentsErrMess={this.props.comments.errMess} //added for exercise: fetch from server
                     postComment={this.props.postComment} //Pass the "postComment" function to this component as a prop because of the "mapDispatchToProps" in the "connect" function.
+                    favorite={false}
+                    postFavorite={this.props.postFavorite}
                 />
             );
-        }
+        };
+
+        //Added for Integration: "PrivateRoute"
+        const PrivateRoute = ({ component: Component, ...rest }) => ( //Shows user their favorite campsites if they are authenticated, if not, redirects to the homepage
+            <Route {...rest} render={props => (
+                this.props.auth.isAuthenticated
+                    ? <Component {...props} />
+                    : <Redirect to={{
+                              pathname: '/home',
+                              state: { from: props.location }
+                          }} 
+                      />
+                )} 
+            />
+        );
 
         return (
             <div>
-                <Header />
+                <Header auth={this.props.auth} //Added for Integration: "auth", "loginUser", and "logoutUser" props
+                    loginUser={this.props.loginUser} 
+                    logoutUser={this.props.logoutUser} 
+                />
                 <TransitionGroup>  {/* Just a wrapper that helps apply transitions to a group of components. 
                 Notes for <CSSTransition> (app crashes if comment is added to the line below for some reason): Requires a unique key. Because ReactRouter applies a unique key to each route, it is available as "this.props.location.key". Given "classNames" WITH AN S (not className). "classNames" is a special attribute that comes with <CSSTransitions>. Whatever "classNames= 'xxx' ", <CSSTransition> looks for a CSS rule that matches 'xxx' plus "-enter", "-enter-active", "-exit", "-exit-active" and it will apply those classes. */}
                     <CSSTransition key={this.props.location.key} classNames="page" timeout={300}>
@@ -82,6 +123,7 @@ class Main extends Component {
                             <Route path='/home' component={HomePage} />{/*This will route any traffic that tries to go to the path Home to the HomePage component.*/}
                             <Route exact path='/directory' render={() => <Directory campsites={this.props.campsites} />} /> {/*Changed "state" to "props" for Redux, note may be outdated: Pass all info in campsites.JS file down as props by setting a custom attribute called "campsites".  The Route command: Matches exact path which is directory, render attribute is set up with an arrow function that returns the Directory component. Render & arrow function are needed because we are passing props within a Routing component. Render & arrow are a good syntax to do this by.  So this is saying when encountering the path '/directory', render the directory component & pass it props. As opposed the the Route for /home and /contactus which use "component=" to directly render the specified Component without passing it any state data as props*/}
                             <Route path='/directory/:campsiteId' component={CampsiteWithId} /> {/* Colon tells the router what follows the forward slash is going to be a parameter, and then it takes whatever that is and puts it inside the property "campsiteId". Then the Route component itself stores an object named "match" in its state which has as a property and object named "params", the campsiteId gets stored as a property of that "params" object. Make the route render a component "CampsiteWithId", the Routes "match" object gets passed to the "CampsiteWithId" component automtically.*/} 
+                            <PrivateRoute exact path='/favorites' component={() => <Favorites favorites={this.props.favorites} deleteFavorite={this.props.deleteFavorite} />} /> {/*Added for Integration */}                         
                             <Route exact path='/contactus' render={() => <Contact resetFeedbackForm={this.props.resetFeedbackForm} postFeedback={this.props.postFeedback} /> } /> {/*Watch the browser address bar and whenever the address bar matches contactus (address bar is changed by the corresponding <Link> component), then show the Contact component. Pass the "resetFeedbackForm" to the Contact component as a prop*/}
                             <Route exact path='/aboutus' render={() => <About partners={this.props.partners} /> } /> {/*Changed "state" to "props" for Redux, note may be outdated: Watch the browser address bar and whenever the address bar matches aboutus (address bar is changed by the corresponding <Link> component), then render the About component and pass all info in partners.JS file down as props by setting a custom attribute called "partners".*/}
                             <Redirect to='/home' /> {/*this redirect component acts as a catch all (like default statement in a JS Switch function)*/}

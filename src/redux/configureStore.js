@@ -7,6 +7,9 @@ import { Campsites } from './campsites';
 import { Comments } from './comments';
 import { Partners } from './partners';
 import { Promotions } from './promotions';
+import { favorites } from './favorites';//Added for Integration
+import { Auth } from './auth';//Added for Integration
+
 import { InitialFeedback } from './forms';
 
 
@@ -17,6 +20,8 @@ export const ConfigureStore = () => { //Named export
             comments: Comments,
             partners: Partners,
             promotions: Promotions,
+            auth: Auth, //Added for Integration
+            favorites, //Added for Integration
             ...createForms({ //Pass to 
                 feedbackForm: InitialFeedback
             })

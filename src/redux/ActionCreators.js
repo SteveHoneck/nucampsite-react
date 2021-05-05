@@ -81,21 +81,23 @@ export const addComment = comment => ({ //Updates the local redux store. Makes a
 });
 
 //Handles asynchronous calls to Fetch and post the comment to the server. Have to make it Thunk by nesting arrow functions.
-export const postComment = (campsiteId, rating, author, text) => dispatch => { //Action creator is using Thunk middle ware so that it can handle asynchronous calls inside it. Must pass in all values that are needed to add a comment. 
+export const postComment = (campsiteId, rating, text) => dispatch => { //Action creator is using Thunk middle ware so that it can handle asynchronous calls inside it. Must pass in all values that are needed to add a comment. 
     const newComment = { //Pass the arguments into an object called "newComment"
         campsiteId: campsiteId,
         rating: rating,
-        author: author,
         text: text
     };
-    newComment.date = new Date().toISOString(); //The date is not being passed in, we are generating a new date property right in the Action Creator, will grab date and time when this part of the code is executed.
+
+    const bearer = 'Bearer ' + localStorage.getItem('token'); //Added for Integration
 
     return fetch(baseUrl + 'comments', {//Set up Fetch. Returning a call to Fetch and give it a Url. 
             method: "POST", //Pass Fetch an optional second argument in the form of an object.
             body: JSON.stringify(newComment), //Request "body" property will be a json encoded version of the "newComment" object we created above.
             headers: { //Requet "header" must be an object itself so it can hold more than 1 header
-                "Content-Type": "application/json" //Server knows to expect the "body" to be formatted as json.
-            }
+                "Content-Type": "application/json", //Server knows to expect the "body" to be formatted as json.
+                'Authorization': bearer //Added for Integration
+            },
+            credentials: 'same-origin' //Added for Integration
         })
         .then(response => { //Handles the resolve / reject from the fetch promise above
                 if (response.ok) {
@@ -223,3 +225,188 @@ export const postFeedback = (feedback) => () => {
         alert("Your feedback could not be posted\nError: " + error.message);
       });
 };
+
+/*Added for Integration: All login and auth action creators*/
+export const requestLogin = creds => {
+    return {
+        type: ActionTypes.LOGIN_REQUEST,
+        creds
+    }
+}
+  
+export const receiveLogin = response => {
+    return {
+        type: ActionTypes.LOGIN_SUCCESS,
+        token: response.token
+    }
+}
+  
+export const loginError = message => {
+    return {
+        type: ActionTypes.LOGIN_FAILURE,
+        message
+    }
+}
+
+export const loginUser = creds => dispatch => {
+    // We dispatch requestLogin to kickoff the call to the API
+    dispatch(requestLogin(creds))
+
+    return fetch(baseUrl + 'users/login', {
+        method: 'POST',
+        headers: { 
+            'Content-Type': 'application/json' 
+        },
+        body: JSON.stringify(creds)
+    })
+    .then(response => {
+            if (response.ok) {
+                return response;
+            } else {
+                const error = new Error(`Error ${response.status}: ${response.statusText}`);
+                error.response = response;
+                throw error;
+            }
+        },
+        error => { throw error; }
+    )
+    .then(response => response.json())
+    .then(response => {
+        if (response.success) {
+            // If login was successful, set the token in local storage.
+            localStorage.setItem('token', response.token); //"localStorage" is a web browser API available in all modern web browsers, not React or Redux method
+            localStorage.setItem('creds', JSON.stringify(creds));
+            // Dispatch the success action
+            dispatch(fetchFavorites());
+            dispatch(receiveLogin(response));
+        } else {
+            const error = new Error('Error ' + response.status);
+            error.response = response;
+            throw error;
+        }
+    })
+    .catch(error => dispatch(loginError(error.message)))
+};
+
+export const requestLogout = () => {
+    return {
+        type: ActionTypes.LOGOUT_REQUEST
+    }
+}
+  
+export const receiveLogout = () => {
+    return {
+        type: ActionTypes.LOGOUT_SUCCESS
+    }
+}
+
+// Logs the user out
+export const logoutUser = () => dispatch => {
+    dispatch(requestLogout())
+    localStorage.removeItem('token');
+    localStorage.removeItem('creds');
+    dispatch(favoritesFailed('Error 401: Unauthorized'));
+    dispatch(receiveLogout())
+}
+
+
+/*Added for Integration: All Favorite action creators*/
+export const postFavorite = campsiteId => dispatch => {
+
+    //const bearer = 'Bearer ' + localStorage.getItem('token');
+
+    return fetch(baseUrl + 'favorites/' + campsiteId, {
+        method: 'POST',
+        headers: {
+            //'Authorization': bearer
+        },
+        //credentials: 'same-origin'
+    })
+    .then(response => {
+            if (response.ok) {
+                return response;
+            } else {
+                const error = new Error(`Error ${response.status}: ${response.statusText}`);
+                error.response = response;
+                throw error;
+            }
+        },
+        error => { throw error; }
+    )
+    .then(response => response.json())
+    .then(favorites => {
+        console.log('Favorite Added', favorites);
+        dispatch(addFavorites(favorites));
+    })
+    .catch(error => dispatch(favoritesFailed(error.message)));
+}
+
+export const deleteFavorite = campsiteId => dispatch => {
+
+    //const bearer = 'Bearer ' + localStorage.getItem('token');
+
+    return fetch(baseUrl + 'favorites/' + campsiteId, {
+        method: 'DELETE',
+        headers: {
+            //'Authorization': bearer
+        },
+        //credentials: 'same-origin'
+    })
+    .then(response => {
+            if (response.ok) {
+                return response;
+            } else {
+                const error = new Error(`Error ${response.status}: ${response.statusText}`);
+                error.response = response;
+                throw error;
+            }
+        },
+        error => { throw error; }
+    )
+    .then(response => response.json())
+    .then(favorites => {
+        console.log('Favorite Deleted', favorites);
+        dispatch(addFavorites(favorites));
+    })
+    .catch(error => dispatch(favoritesFailed(error.message)));
+};
+
+export const fetchFavorites = () => dispatch => {
+    dispatch(favoritesLoading());
+
+    //const bearer = 'Bearer ' + localStorage.getItem('token');
+
+    return fetch(baseUrl + 'favorites', {
+        headers: {
+            //'Authorization': bearer
+        },
+    })
+    .then(response => {
+            if (response.ok) {
+                return response;
+            } else {
+                const error = new Error(`Error ${response.status}: ${response.statusText}`);
+                error.response = response;
+                throw error;
+            }
+        },
+        error => { throw error; }
+    )
+    .then(response => response.json())
+    .then(favorites => dispatch(addFavorites(favorites)))
+    .catch(error => dispatch(favoritesFailed(error.message)));
+}
+
+export const favoritesLoading = () => ({
+    type: ActionTypes.FAVORITES_LOADING
+});
+
+export const favoritesFailed = errMess => ({
+    type: ActionTypes.FAVORITES_FAILED,
+    payload: errMess
+});
+
+export const addFavorites = favorites => ({
+    type: ActionTypes.ADD_FAVORITES,
+    payload: favorites
+});
