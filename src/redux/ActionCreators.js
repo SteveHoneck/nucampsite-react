@@ -83,11 +83,10 @@ export const addComment = comment => ({ //Updates the local redux store. Makes a
 //Handles asynchronous calls to Fetch and post the comment to the server. Have to make it Thunk by nesting arrow functions.
 export const postComment = (campsiteId, rating, text) => dispatch => { //Action creator is using Thunk middle ware so that it can handle asynchronous calls inside it. Must pass in all values that are needed to add a comment. 
     const newComment = { //Pass the arguments into an object called "newComment"
-        campsiteId: campsiteId,
+        campsite: campsiteId,
         rating: rating,
         text: text
     };
-
     const bearer = 'Bearer ' + localStorage.getItem('token'); //Added for Integration
 
     return fetch(baseUrl + 'comments', {//Set up Fetch. Returning a call to Fetch and give it a Url. 
@@ -313,14 +312,14 @@ export const logoutUser = () => dispatch => {
 /*Added for Integration: All Favorite action creators*/
 export const postFavorite = campsiteId => dispatch => {
 
-    //const bearer = 'Bearer ' + localStorage.getItem('token');
+    const bearer = 'Bearer ' + localStorage.getItem('token');
 
     return fetch(baseUrl + 'favorites/' + campsiteId, {
         method: 'POST',
         headers: {
-            //'Authorization': bearer
+            'Authorization': bearer
         },
-        //credentials: 'same-origin'
+        credentials: 'same-origin'
     })
     .then(response => {
             if (response.ok) {
@@ -343,14 +342,14 @@ export const postFavorite = campsiteId => dispatch => {
 
 export const deleteFavorite = campsiteId => dispatch => {
 
-    //const bearer = 'Bearer ' + localStorage.getItem('token');
+    const bearer = 'Bearer ' + localStorage.getItem('token');
 
     return fetch(baseUrl + 'favorites/' + campsiteId, {
         method: 'DELETE',
         headers: {
-            //'Authorization': bearer
+            'Authorization': bearer
         },
-        //credentials: 'same-origin'
+        credentials: 'same-origin'
     })
     .then(response => {
             if (response.ok) {
@@ -374,11 +373,11 @@ export const deleteFavorite = campsiteId => dispatch => {
 export const fetchFavorites = () => dispatch => {
     dispatch(favoritesLoading());
 
-    //const bearer = 'Bearer ' + localStorage.getItem('token');
+    const bearer = 'Bearer ' + localStorage.getItem('token');
 
     return fetch(baseUrl + 'favorites', {
         headers: {
-            //'Authorization': bearer
+            'Authorization': bearer
         },
     })
     .then(response => {

@@ -10,10 +10,11 @@ import {
   Modal,
   ModalHeader,
   ModalBody,
-  Label
+  Label,
+  CardImgOverlay
 } from 'reactstrap';
 import { Link } from 'react-router-dom';
-import { Control, LocalForm, Errors } from 'react-redux-form';
+import { Control, LocalForm } from 'react-redux-form';
 import { Loading } from './LoadingComponent';
 import { baseUrl } from '../shared/baseUrl'; //Added for Exercies: Fetch from server
 import { FadeTransform, Fade, Stagger } from 'react-animation-components'; 
@@ -56,7 +57,7 @@ function RenderComments({comments, postComment, campsiteId}) {//This funciton is
           <Stagger in>
             {comments.map(comment => { //Argument "comments" is an array from campsites.js. It is made available/passed into this function by the render function/method below.  JSX can only accept one return value from the .map loop so to make the comment.text and comment.author appear on different lines, they must be wrapped in an outer <div> with <p> and line break <br/> to provide proper spacing. Multiple <div>s can be used around the comment.text and comment.date, but they must be in one outer return <div> (spacing is not as nice with this method).
               return ( //I did not have this "return" in here & it was working after week 2 workshop, but the lectures had it in here so I added it.
-                <Fade in key={comment.id}> {/*Needs boolean attribute of in. Unique "key" must always go on the top most element (was in the <div> from previous exercise)*/}
+                <Fade in key={comment._id}> {/*Needs boolean attribute of in. Unique "key" must always go on the top most element (was in the <div> from previous exercise)*/}
                   <div>
                     <p>{comment.text}</p>
                     <p>{comment.rating} stars</p>
@@ -65,7 +66,7 @@ function RenderComments({comments, postComment, campsiteId}) {//This funciton is
                         year: "numeric",
                         month: "short",
                         day: "2-digit",
-                      }).format(new Date(Date.parse(comment.date)))}
+                      }).format(new Date(Date.parse(comment.updatedAt)))}
                     </p>
                   </div>
                 </Fade>
@@ -118,7 +119,7 @@ function CampsiteInfo(props) { //This is recieving a campsite, isLoading, errMes
           <RenderComments 
             comments={props.comments} ///*Pass the comments array as props (now labeled "comments") to RenderComment. It was passed from Main component to CampsiteInfo component, and now is being passed to RenderComments component. This USED TO pass the "comments" array from the campsites.js file into the RenderComments method/function. "comments" array WAS being made available as "props" to this CampsiteInfoComponent.js file because the CampsiteInfo component is called with an attribute named "campsite" inside the JSX tag in the MainComponent.js file, which passes it as "props" to this file.*/
             postComment={props.postComment} //<CampsiteInfo> is recieveing this as a prop from main as a result of adding Redux actions, and it is in turn getting passed to <RenderComments>
-            campsiteId={props.campsite.id} //<CampsiteInfo> is recieveing this as a prop from main as a result of adding Redux actions, and it is in turn getting passed to <RenderComments>
+            campsiteId={props.campsite._id} //<CampsiteInfo> is recieveing this as a prop from main as a result of adding Redux actions, and it is in turn getting passed to <RenderComments>
           /> 
         </div>
       </div>
@@ -179,21 +180,22 @@ class CommentForm extends Component {
             <LocalForm onSubmit={ (values) => this.submitComment(values) }>
               <div className="form-group">
                 <Label htmlFor="rating">Rating</Label>
-                <Control.Select 
+                <Control.select 
                   model=".rating" 
                   id="rating" 
                   name="rating" 
-                  className="form-control">
-                    <option value='1'>1</option> {/*Bug? in React-Redux-Form: If this is included as the first option, it will not submitt. It must be deselected then reselected.*/}
+                  className="form-control"
+                  defaultValue="5">{/*React-Redux-Form: If this is not included, the form will not submit if the user does not deselected then reselect a value.*/}
+                    <option value='1'>1</option> 
                     <option value='2'>2</option>
                     <option value='3'>3</option>
                     <option value='4'>4</option>
                     <option value='5'>5</option>
-                </Control.Select>
+                </Control.select>
               </div>
               <div className="form-group">
                 <Label htmlFor="text">Comment</Label>
-                <Control.TextArea 
+                <Control.textarea 
                 model=".text" 
                 id="text" 
                 name="text" 

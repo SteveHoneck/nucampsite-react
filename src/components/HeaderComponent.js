@@ -37,6 +37,11 @@ class Header extends Component {
         event.preventDefault(); //prevents the entire page from being rerendered 
     }   
 
+    handleLogout() { //added for integration
+        this.props.logoutUser();
+    }
+
+
     render() {
         return(
             <React.Fragment> {/*This return statement is returning two JSX elements, which is not allowed by return(). Could wrap both in a <div> but that creates an extra DOM node. Ues <React.Fragment>, it does same thing, but does not create a new DOM node. Shorthand is <>JSX Elements</>*/}

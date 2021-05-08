@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Directory from './DirectoryComponent';
 import CampsiteInfo from './CampsiteInfoComponent';
+import Favorites from './FavoriteComponent';
 import Header from './HeaderComponent';
 import Footer from './FooterComponent';
 import Home from './HomeComponent';
@@ -24,7 +25,7 @@ const mapStateToProps = state => { //Get state from Redux by setting up this fun
 };
 
 const mapDispatchToProps = { //Added to use the ActionCreators. Can be set up as a function or as an object (as seen here).
-    postComment: (campsiteId, rating, author, text) => (postComment(campsiteId, rating, author, text)),  //"mapDispatchToProps" is constant with one property of "postComment" that has an arrow function with the paramater list of "campsiteId, rating, author, text" and the arrow function's body calls the Action Creator "postComment" & passes in the data from the parameter list.
+    postComment: (campsiteId, rating, text) => (postComment(campsiteId, rating, text)),  //"mapDispatchToProps" is constant with one property of "postComment" that has an arrow function with the paramater list of "campsiteId, rating, author, text" and the arrow function's body calls the Action Creator "postComment" & passes in the data from the parameter list.
     fetchCampsites: () => (fetchCampsites()), //"mapDispatchToProps" is constant with another property of "fetchCampsites". This property is an Arrow function with no arguments that calls the "fetchCampsites" action creator. The "fetchCampsites" action creator is now available to the MainComponent as props.
     resetFeedbackForm: () => (actions.reset('feedbackForm')), //Added for React Redux Form. "actions.reset" is built in method/function from react-redux-form library
     fetchComments: () => (fetchComments()), //Arrow function that calls the "fetchComments" action creator. 
@@ -84,10 +85,10 @@ class Main extends Component {
                 />
                 : //if the user is not logged in, this is displayed
                 <CampsiteInfo //Need to pass selected campsite object and an array of all the comments for the campsite.
-                    campsite={this.props.campsites.campsites.filter(campsite => campsite.id === +match.params.campsiteId)[0]}  //Changed "state" to "props" for Redux, note may be outdated: The full list of campsites is inside Main component's state, it can be accessed with this.state.campsites, then we filter it to look for the campsite object that has the Id that matches what is stored in "match.params.campsiteId" which is stored as a string, so it must be converted to a number using whats called the unary + operator (). Filter returns an array, and we want the campsite object, use [0] to get that entire object. Due to Thunk, "campsites.campsites." is getting the campsites array out of an object also named campsites.
+                    campsite={this.props.campsites.campsites.filter(campsite => campsite._id === match.params.campsiteId)[0]}  //Changed "state" to "props" for Redux, note may be outdated: The full list of campsites is inside Main component's state, it can be accessed with this.state.campsites, then we filter it to look for the campsite object that has the Id that matches what is stored in "match.params.campsiteId" which is stored as a string, so it must be converted to a number using whats called the unary + operator (). Filter returns an array, and we want the campsite object, use [0] to get that entire object. Due to Thunk, "campsites.campsites." is getting the campsites array out of an object also named campsites.
                     isLoading={this.props.campsites.isLoading} //Due to Thunk Pass the "isLoading" property of the campsite state object as props
                     errMess={this.props.campsites.errMess}//Due to Thunk Pass the "errMess" property of the campsite state object as props
-                    comments={this.props.comments.comments.filter(comment => comment.campsiteId === +match.params.campsiteId)} //Same for comments, but want the whole comment array, so don't use [0].
+                    comments={this.props.comments.comments.filter(comment => comment.campsite === match.params.campsiteId)} //Same for comments, but want the whole comment array, so don't use [0].
                     commentsErrMess={this.props.comments.errMess} //added for exercise: fetch from server
                     postComment={this.props.postComment} //Pass the "postComment" function to this component as a prop because of the "mapDispatchToProps" in the "connect" function.
                     favorite={false}

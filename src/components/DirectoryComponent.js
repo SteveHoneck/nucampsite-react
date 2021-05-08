@@ -7,7 +7,7 @@ import { baseUrl } from '../shared/baseUrl'; //Added for Exercies: Fetch from se
 function RenderDirectoryItem({campsite}){//Will be responsible for rendering each card with different campsite details. Fuctional components only accept 1 props object as an argument. Props object has been destructured in the argument list here.
     return (
         <Card>
-            <Link to={`/directory/${campsite.id}`}> {/*Create a dynamic link using vanilla JS (for the string that is passed in must use template literal so we can use JS in the sting so backtics are required). Whatever campsite is selected it is going to link to the /directory/ the id that capsite.*/}
+            <Link to={`/directory/${campsite._id}`}> {/*Create a dynamic link using vanilla JS (for the string that is passed in must use template literal so we can use JS in the sting so backtics are required). Whatever campsite is selected it is going to link to the /directory/ the id that capsite.*/}
                 <CardImg width="100%" src={baseUrl + campsite.image} alt={campsite.name} /> {/* Added "baseUrl + " for Exercies: Fetch from server because the image source is now coming from json server*/}
                 <CardImgOverlay>
                     <CardTitle>{campsite.name}</CardTitle>
@@ -20,7 +20,7 @@ function RenderDirectoryItem({campsite}){//Will be responsible for rendering eac
 function Directory(props) {
     const directory = props.campsites.campsites.map(campsite => { //Map goes through all the campsites from the local state of the MainComponent.js file and will make a new array where each array item contains the below set of JSX elements but using a different campsite for each item. Then the whole array is rendered insid the bootstrap column in the return function below. Campsites is passed to this file from XXXXXX????? through the "props" command.
         return (//not the same return from the whole component, only for the arrow function. key= added as the unique key for topmost element as required/recommended by React 
-            <div key={campsite.id} className = "col-md-5 m-1">
+            <div key={campsite._id} className = "col-md-5 m-1">
                 <RenderDirectoryItem campsite={campsite} /> {/*Call RenderDirectoryItem functional component and pass it campsite (coming from .map method I think?)*/}
             </div>
         );
