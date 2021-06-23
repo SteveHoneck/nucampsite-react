@@ -39,6 +39,7 @@ $ yarn start
 ```
 - A web browser should open with to the Nucamp site. If it does not, open a browser and navigate to http://localhost:3001 
 
+- NOTE: Some browsers will fail to fetch network resources due to the self-signed certificate in this project. Browser security settings can be adjusted to address this. 
 
 That's it! Explore the NuCamp website. 
 
