@@ -1,0 +1,17 @@
+/* 
+Navigate to directory
+navigate to a campsite
+click on comment button
+change rating
+type in comment
+hit submit
+verify it can not be submitted
+
+sign in through cypress
+click on comment button
+change rating
+type in comment
+hit submit
+verify it can be submitted
+
+*/
