@@ -9,8 +9,6 @@
 /coverage
 cypress/integration/examples
 cypress/fixtures/example.json
-cypress/support
-cypress/plugins/index.js
 
 # production
 /build

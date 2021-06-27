@@ -20,5 +20,6 @@ describe('Loggin a user in and out', () => {
 })
 
 //Add check for JWT?
+//Add check for invalid user name & password
 
 
