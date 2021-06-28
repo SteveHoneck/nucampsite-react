@@ -9,6 +9,8 @@
 /coverage
 cypress/integration/examples
 cypress/fixtures/example.json
+cypress/screenshots
+cypress/videos
 
 # production
 /build
