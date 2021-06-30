@@ -25,6 +25,19 @@
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
 
+//Command to login using the UI, not best practice
+
+Cypress.Commands.add('uiLogin', () => { 
+    cy.visit('/') 
+    cy.contains('Login').click() 
+    cy.get('input[name="username"]').type('admin')
+    cy.get('input[name="password"]').type('password') 
+    cy.get('button[value="submit"]').click()
+    cy.get('div[class="navbar-text mr-3"]').should('contain', 'admin') 
+})
+
+
+//Command to programatically log in (NOT WORKING)
 Cypress.Commands.add('login', () => {
     cy.request({
         url: "https://localhost:3443/users/login",

@@ -13,18 +13,13 @@ describe('Leaving comments', () => {
             expect(alertText).to.contain('Your comment could not be posted')
         })
         
-        cy.get('[class="col-md-5 m-1"]').children().should('not.contain', 'NOT')//POTENETIAL ERROR: Gets the column the comments are in, need a better selector than the class because it could change or be used somewhere else.
+        cy.get('[class="col-md-5 m-1"]').children().should('not.contain', 'NOT')//POTENETIAL ERROR: Gets the column the comments are in and makes sure the test comment, which includes 'NOT', is not present. Need a better selector than the class because it could change or be used somewhere else.
     })
 
 
     it('checks that an authorized user can post a comment', () => {
         //Below UI login to be replaced with "cy.login()" when working
-        cy.visit('/') 
-        cy.contains('Login').click() 
-        cy.get('input[name="username"]').type('admin')
-        cy.get('input[name="password"]').type('password') 
-        cy.get('button[value="submit"]').click()
-        cy.get('div[class="navbar-text mr-3"]').should('contain', 'admin') 
+        cy.uiLogin() 
         //End UI login
         cy.contains('Directory').click()
         cy.contains('React Lake Campground').click()
@@ -33,9 +28,7 @@ describe('Leaving comments', () => {
         cy.get('select').select('3').should('have.value', '3')
         cy.get('button[value="submit"]').click()
         cy.get('[class="col-md-5 m-1"]').children().should('contain', 'IS')//POTENETIAL ERROR: Gets the column the comments are in, need a better selector than the class because it could change or be used somewhere else.
-        //Test that the comment exists and that the date & author is correct
+        //Test that the date & author is correct?
     })
-    
-
 //Need to erase comments in database after tests
 })
