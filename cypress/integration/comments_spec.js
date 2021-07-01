@@ -12,8 +12,7 @@ describe('Leaving comments', () => {
         cy.on('window:alert', (alertText) => { //POTENTIAL ERROR: does not account for the scenario of the alert window not popping up (remove "cy.get('button[value="submit"]').click()" for example problem)
             expect(alertText).to.contain('Your comment could not be posted')
         })
-        
-        cy.get('[class="col-md-5 m-1"]').children().should('not.contain', 'NOT')//POTENETIAL ERROR: Gets the column the comments are in and makes sure the test comment, which includes 'NOT', is not present. Need a better selector than the class because it could change or be used somewhere else.
+        cy.contains('div', 'Comments').should('not.contain', 'NOT')//POTENETIAL ERROR: Gets the column the comments are in and makes sure the test comment, which includes 'NOT', is not present. Need a better selector than the element because it could change.
     })
 
 
@@ -27,7 +26,7 @@ describe('Leaving comments', () => {
         cy.get('textarea[name="text"]').type('Cypress test comment: user IS logged in')
         cy.get('select').select('3').should('have.value', '3')
         cy.get('button[value="submit"]').click()
-        cy.get('[class="col-md-5 m-1"]').children().should('contain', 'IS')//POTENETIAL ERROR: Gets the column the comments are in, need a better selector than the class because it could change or be used somewhere else.
+        cy.contains('div', 'Comments').should('contain', 'IS')//POTENETIAL ERROR: Gets the column the comments are in and makes sure the test comment, which includes 'IS', is present. Need a better selector than the element because it could change.
         //Test that the date & author is correct?
     })
 //Need to erase comments in database after tests
