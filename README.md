@@ -4,9 +4,9 @@ Application created throughout the course of the Nucamp Bootcamp. Built using Re
 
 Allows users to explore information on campsites, review and post comments, and register for campsites.
 
-[![](./public/assets/images/screenshot1.png?raw=true "Click to visit")](https://nucampsite.stevehoneck.com)
+[![](./public/assets/images/screenshot1.png?raw=true "Click to visit")](http://18.117.78.148/home)
 
-[![](./public/assets/images/screenshot2.png?raw=true "Click to visit")](https://nucampsite.stevehoneck.com)
+[![](./public/assets/images/screenshot2.png?raw=true "Click to visit")](http://18.117.78.148/home)
 
 ### Installation
 - Install MongoDB (project built and tested with 4.2.13) via [MongoDB website](https://www.mongodb.com/try/download/community)
