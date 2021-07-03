@@ -5,6 +5,7 @@ Application created throughout the course of the Nucamp Bootcamp. Built using Re
 Allows users to explore information on campsites, review and post comments, and register for campsites.
 
 [![](./public/assets/images/screenshot1.png?raw=true "Click to visit")](https://nucampsite.stevehoneck.com)
+
 [![](./public/assets/images/screenshot2.png?raw=true "Click to visit")](https://nucampsite.stevehoneck.com)
 
 ### Installation
